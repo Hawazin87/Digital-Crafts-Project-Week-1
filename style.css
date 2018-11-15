@@ -1,0 +1,40 @@
+* {font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
+
+  }
+  
+  
+.html { 
+
+    
+    background: url(background.jpg);
+    /*filter:blur(8px);*/
+    height:100%;
+    width:100%;
+    background-repeat: no-repeat;
+    background-position:center;
+    background-size: cover;
+    z-index: -1;
+   
+  }
+
+
+  .logo{
+    font-size: 85%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #bbb;
+    font-size: 32px;
+    font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
+    font-weight: 100;
+    color:yellow;
+    
+  }
+  
+
+@media(max-width:560px) {
+    .html {
+        height:100px;
+    }
+  }
+  
+  
