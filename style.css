@@ -2,8 +2,10 @@
 
   }
   
-  
-.html { 
+body{
+    margin:0;
+}
+.main-html { 
 
     
     background: url(background.jpg);
@@ -16,7 +18,9 @@
     z-index: -1;
    
   }
-
+.main-container{
+    height:1000px;
+}
 
   .logo{
     font-size: 85%;
@@ -26,15 +30,73 @@
     font-size: 32px;
     font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
     font-weight: 100;
-    color:yellow;
+    color:white;
     
   }
-  
+  .welcome{
+   font-size:48px;
+  }
 
-@media(max-width:560px) {
-    .html {
-        height:100px;
+  @media (min-width:1000px){
+      .login{
+          height:350px;
+          width:690px;
+      }
+  }
+
+
+
+
+
+  @media screen and (max-width: 400px) {
+      
+    .main-html {
+        height:475px;
+        width:100%;
+        margin-top:170px;
+        background-position:center;
+        margin: 0 auto;
     }
+    .welcome{
+        text-align:center;
+        margin-top:70px;
+        font-size: 16px;
+        width:300px;
+        
+       
+
+    }
+    
+    .login{
+        
+        height:auto;
+        width:375px;
+        margin-top:150px;
+        
+
+        
+    
+        
+        
+
+    
+    }
+   
+    
+    .main-container{
+        height:1144px;
+        margin:0 auto;
+        text-align:center;
+        
+       
+        
+
+    }
+    footer{
+        margin-top:50px;
+        margin-bottom:0px;
+    }
+    
   }
   
   
