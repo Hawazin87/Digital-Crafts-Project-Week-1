@@ -4,6 +4,7 @@ var signUpButton = document.getElementById("sign-up-button");
 var loginButton = document.getElementById("log-in-button");
 
 
+
 function showSignUpForm(){
     signUpButton.style.setProperty("display","none");
     loginButton.style.setProperty("display","none");
@@ -25,7 +26,7 @@ function createNewAccount(){
         password = document.getElementById("sign-up-password").value;
         firebase.auth().createUserWithEmailAndPassword(email, password).then(function(){
         console.log("new account created successfully");
-        window.location.href = "dashboard.html";
+        writeUserData();
         }).catch(function(error) {
         var errorMessage = error.message;
         alert(errorMessage);
@@ -77,14 +78,15 @@ function logOutUser(){
 
  function writeUserData(){
     //var username=user.uid;
-    var username=document.getElementById("sign-up-username");
-    var todoList=document.getElementById("form-control");//form-control is a placeholder
-    var listByTime= document.getElementById("inputOfTime");//inputOfTime is placeholder
+    var userName=document.getElementById("sign-up-username");
+    //var todoList=document.getElementById("form-control");//form-control is a placeholder
+    //var listByTime= document.getElementById("inputOfTime");//inputOfTime is placeholder
 
-    database.ref(`UserNames/${listByTime}`).set({
+    firebase.database().ref(`usernames/${userName}`).set({
 
-        userNameDatabase: username,
-        todoListDatabase: [todoList.value]
+        username: userName,
+       // todoListDatabase: [todoList.value]
 
     });
+    window.location.href = "dashboard.html";
 }
