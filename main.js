@@ -74,3 +74,17 @@ function logOutUser(){
 
  }
  }
+
+ function writeUserData(){
+    //var username=user.uid;
+    var username=document.getElementById("sign-up-username");
+    var todoList=document.getElementById("form-control");//form-control is a placeholder
+    var listByTime= document.getElementById("inputOfTime");//inputOfTime is placeholder
+
+    database.ref(`UserNames/${listByTime}`).set({
+
+        userNameDatabase: username,
+        todoListDatabase: [todoList.value]
+
+    });
+}
