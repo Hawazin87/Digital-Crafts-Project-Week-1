@@ -1,0 +1,22 @@
+
+
+form {
+    display: inline-block;
+
+}
+
+.row {
+    display: center;
+}
+
+.container {
+    font-family: 'Spicy Rice', cursive;
+    text-align: center;
+    padding-bottom: 25px;
+    padding-top: 20px;
+}
+
+
+h1 {
+    font-family: 'Spicy Rice', cursive;
+}
