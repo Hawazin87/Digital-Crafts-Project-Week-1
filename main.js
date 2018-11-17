@@ -2,7 +2,7 @@ var signUpForm = document.getElementById("sign-up-form");
 var logInForm = document.getElementById("log-in-form");
 var signUpButton = document.getElementById("sign-up-button");
 var loginButton = document.getElementById("log-in-button");
-
+var database= firebase.database();
 
 
 function showSignUpForm(){
@@ -78,13 +78,14 @@ function logOutUser(){
 
  function writeUserData(){
     //var username=user.uid;
-    var userName=document.getElementById("sign-up-username");
+    var userName=document.getElementById("sign-up-username").value;
+    console.log(userName);
     //var todoList=document.getElementById("form-control");//form-control is a placeholder
     //var listByTime= document.getElementById("inputOfTime");//inputOfTime is placeholder
 
-    firebase.database().ref(`usernames/${userName}`).set({
+    database.ref(`usernames/${userName}`).set({
 
-        username: userName,
+        username: userName
        // todoListDatabase: [todoList.value]
 
     });
