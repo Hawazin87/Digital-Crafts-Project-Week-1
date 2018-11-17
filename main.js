@@ -38,7 +38,7 @@ function loginToExistingAccount(){
 
         //username = document.getElementById("sign-up-username").value;
         email = document.getElementById("login-email").value;
-        password = document.getElementById("sign-up-password").value;
+        password = document.getElementById("login-password").value;
         firebase.auth().signInWithEmailAndPassword(email, password).then(function(){
         console.log("Logged in successfully");
         window.location.href = "dashboard.html";
@@ -54,3 +54,23 @@ function cancel(){
     location.reload();
 }
 
+function logOutUser(){
+
+    var user = firebase.auth().currentUser;
+
+    if (user) {
+
+        firebase.auth().signOut().then(function() {
+          window.location.href = "index.html";
+      }).catch(function(error) {
+            alert(error);
+            return;
+        });
+
+    } else {
+
+    alert("no one is logged in")
+    return;
+
+ }
+ }
