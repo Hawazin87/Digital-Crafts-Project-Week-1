@@ -1,102 +1,69 @@
 * {font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
 
-  }
+}
+
+html{
+      height: 100vh;
+}
   
 body{
     margin:0;
-}
-.main-html { 
-
-    
-    background: url(background.jpg);
-    /*filter:blur(8px);*/
+    background-color:#D3D3D3;
     height:100%;
     width:100%;
-    background-repeat: no-repeat;
-    background-position:center;
-    background-size: cover;
-    z-index: -1;
-   
-  }
-.main-container{
-    height:1000px;
 }
 
-  .logo{
+.main-wrapper{
+   margin:0 auto;
+   height:770px;
+}
+
+.auth-box{
+    max-width:400px;
+}
+
+.welcome {
     font-size: 85%;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #bbb;
     font-size: 32px;
     font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
     font-weight: 100;
     color:white;
-    
-  }
-  .welcome{
-   font-size:48px;
-  }
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
 
-  @media (min-width:1000px){
-      .login{
-          height:350px;
-          width:690px;
-      }
-  }
+.saying p {
+    font-size:22px;
+}
+
+.buttons{
+    margin-top:30px;
+    width:100%;
+}
+
+.buttons button{
+    margin-right:15px;
+    width:84px;
+}
+
+footer{
+    height:90px;
+    font-size:12px;
+}
+
+.spacer50{
+    height:50px;
+    width:100%;
+}
 
 
-
-
-
-  @media screen and (max-width: 400px) {
-      
-    .main-html {
-        height:475px;
-        width:100%;
-        margin-top:170px;
-        background-position:center;
-        margin: 0 auto;
-    }
-    .welcome{
-        text-align:center;
-        margin-top:70px;
-        font-size: 16px;
-        width:300px;
-        
-       
-
-    }
-    
-    .login{
-        
-        height:auto;
-        width:375px;
-        margin-top:150px;
-        
-
-        
-    
-        
-        
 
     
-    }
-   
-    
-    .main-container{
-        height:1144px;
-        margin:0 auto;
-        text-align:center;
-        
-       
-        
 
-    }
-    footer{
-        margin-top:50px;
-        margin-bottom:0px;
-    }
-    
-  }
   
   
