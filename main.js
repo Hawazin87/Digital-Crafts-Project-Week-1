@@ -18,6 +18,38 @@ function showLoginForm(){
 
 }
 
+function createNewAccount(){
+
+        //username = document.getElementById("sign-up-username").value;
+        email = document.getElementById("sign-up-email").value;
+        password = document.getElementById("sign-up-password").value;
+        firebase.auth().createUserWithEmailAndPassword(email, password).then(function(){
+        console.log("new account created successfully");
+        window.location.href = "dashboard.html";
+        }).catch(function(error) {
+        var errorMessage = error.message;
+        alert(errorMessage);
+        return;
+        });
+    
+}
+
+function loginToExistingAccount(){
+
+        //username = document.getElementById("sign-up-username").value;
+        email = document.getElementById("login-email").value;
+        password = document.getElementById("sign-up-password").value;
+        firebase.auth().signInWithEmailAndPassword(email, password).then(function(){
+        console.log("Logged in successfully");
+        window.location.href = "dashboard.html";
+        }).catch(function(error) {
+        var errorMessage = error.message;
+        alert(errorMessage);
+        return;
+        });
+
+}
+
 function cancel(){
     location.reload();
 }
