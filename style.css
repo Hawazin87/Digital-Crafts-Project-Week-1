@@ -1,0 +1,69 @@
+* {font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
+
+}
+
+html{
+      height: 100vh;
+}
+  
+body{
+    margin:0;
+    background-color:#D3D3D3;
+    height:100%;
+    width:100%;
+}
+
+.main-wrapper{
+   margin:0 auto;
+   height:770px;
+}
+
+.auth-box{
+    max-width:400px;
+}
+
+.welcome {
+    font-size: 85%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 32px;
+    font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
+    font-weight: 100;
+    color:white;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
+.saying p {
+    font-size:22px;
+}
+
+.buttons{
+    margin-top:30px;
+    width:100%;
+}
+
+.buttons button{
+    margin-right:15px;
+    width:84px;
+}
+
+footer{
+    height:90px;
+    font-size:12px;
+}
+
+.spacer50{
+    height:50px;
+    width:100%;
+}
+
+
+
+    
+
+  
+  
