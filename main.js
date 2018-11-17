@@ -2,6 +2,7 @@ var signUpForm = document.getElementById("sign-up-form");
 var logInForm = document.getElementById("log-in-form");
 var signUpButton = document.getElementById("sign-up-button");
 var loginButton = document.getElementById("log-in-button");
+var database= firebase.database();
 
 
 function showSignUpForm(){
@@ -25,7 +26,7 @@ function createNewAccount(){
         password = document.getElementById("sign-up-password").value;
         firebase.auth().createUserWithEmailAndPassword(email, password).then(function(){
         console.log("new account created successfully");
-        window.location.href = "dashboard.html";
+        writeUserData();
         }).catch(function(error) {
         var errorMessage = error.message;
         alert(errorMessage);
@@ -74,3 +75,19 @@ function logOutUser(){
 
  }
  }
+
+ function writeUserData(){
+    //var username=user.uid;
+    var userName=document.getElementById("sign-up-username").value;
+    console.log(userName);
+    //var todoList=document.getElementById("form-control");//form-control is a placeholder
+    //var listByTime= document.getElementById("inputOfTime");//inputOfTime is placeholder
+
+    database.ref(`usernames/${userName}`).set({
+
+        username: userName
+       // todoListDatabase: [todoList.value]
+
+    });
+    window.location.href = "dashboard.html";
+}
