@@ -7,26 +7,25 @@ html{
 }
   
 body{
-    margin:0;
-    background-color:#D3D3D3;
     height:100%;
     width:100%;
 }
 
 .main-wrapper{
-   margin:0 auto;
-   height:770px;
+    opacity: .9;
+    background-image:url(img/phone.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
 .auth-box{
     max-width:400px;
+    border-radius:10px;
 }
 
 .welcome {
-    font-size: 85%;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 32px;
+    padding:15px;
     font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
     font-weight: 100;
     color:white;
@@ -37,9 +36,6 @@ body{
     1px 1px 0 #000;
 }
 
-.saying p {
-    font-size:22px;
-}
 
 .buttons{
     margin-top:30px;
@@ -47,9 +43,52 @@ body{
 }
 
 .buttons button{
-    margin-right:15px;
+    margin:5px;
     width:84px;
+    border:1px solid black;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+    
 }
+
+#sign-up-form label, #log-in-form label{
+margin:15px;
+font-size:24px;
+color:white;
+text-shadow:
+1px 1px #000,
+1px 1px #000,
+1px 1px #000,
+1px 1px #000;
+}
+
+#sign-up-form input, #log-in-form input{
+    background-color:#C0C0C0;
+    height:45px;
+}
+
+#sign-up-form input:active,
+#sign-up-form input:hover,
+#sign-up-form input:focus, 
+#log-in-form input:active,
+#log-in-form input:hover,
+#log-in-form input:focus {
+    background-color:white;
+}
+
+#sign-up-form button, #log-in-form button{
+margin-bottom:15px;
+border:1px solid black;
+text-shadow:
+1px 1px #000,
+1px 1px #000,
+1px 1px #000,
+1px 1px #000;
+}
+
 
 footer{
     height:90px;
@@ -60,3 +99,27 @@ footer{
     height:50px;
     width:100%;
 }
+.dashboard-body{
+    color:white;
+}
+
+.greeting{
+    color:white;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
+.logOut{
+    text-align:right;
+    margin-left:-30px;
+    margin-top:30px;
+    width:100%;
+}
+
+.logOut:hover{
+    cursor: pointer;
+}
+

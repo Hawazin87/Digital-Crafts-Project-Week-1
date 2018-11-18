@@ -4,13 +4,13 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" href="style.css">
         <title>
-        My Rememinders
+        Dashboard
         </title>
     </head>
-    <body>
-    <button onclick="logOutUser()" type="button">Logout</button><br><br>
+    <body onload="renderAccount()" class="dashboard-body bg-dark">
+    <p class="logOut" onclick="logOutUser()">Logout</p>
         <div class="container">
-                    <h2 class="display-3 text-center">Merry Mac's Rememinders</h2><br>
+                    <h2 id="greeting" class="greeting display-3 text-center"></h2><br>
                     <p class="lead text-center">Get Meming-ful Motivation to get SH*T done!</p>
                     <div class="row">
                         <form id="form">

@@ -1,4 +1,5 @@
-# Digital-Crafts-Project-Week-1
+# Digital-Crafts-Project
+## Meme-spiration
 Group members include
 
   - Hawazin Abdullah
