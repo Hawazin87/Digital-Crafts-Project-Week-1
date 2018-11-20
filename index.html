@@ -35,7 +35,7 @@
                                     <input type="password" class="form-control" id="sign-up-password" name="sign-up-password" placeholder="Password">
 
                                     <label for="sign-up-pic">Profile Picture</label>
-                                    <input type="file" class="form-control" id="sign-up-pic" name="sign-up-pic" placeholder="">
+                                    <input type="file" class="form-control" id="sign-up-pic" name="sign-up-pic" placeholder="" accept="image/*">
 
                                     <label for="sign-up-number">Phone-Number</label>
                                     <input type="number" class="form-control" id="sign-up-number" name="sign-up-number" placeholder="111-222-3333">
@@ -84,6 +84,8 @@
             messagingSenderId: "966818827461"
         };
         firebase.initializeApp(config);
+        const storageService = firebase.storage();
+        const storageRef = storageService.ref();
         </script>
         <script src="main.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

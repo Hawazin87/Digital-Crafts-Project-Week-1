@@ -3,8 +3,6 @@ var logInForm = document.getElementById("log-in-form");
 var signUpButton = document.getElementById("sign-up-button");
 var loginButton = document.getElementById("log-in-button");
 var authBox = document.getElementById("auth-box");
-var database = firebase.database();
-
 
 function showSignUpForm(){
     signUpButton.style.setProperty("display","none");
@@ -59,20 +57,11 @@ function logOutUser(){
  function setUserName(un,pp){
 
     var user = firebase.auth().currentUser;
-    var userNumber = database.ref(`usernames/${un}`).once("value").then(function(snapshot){
-        console.log(snapshot.val().phonenumber);
-        return snapshot.val().phonenumber;
-    }).catch(function(error){
-        alert(error.message);
-    });
-
-    console.log(userNumber);
 
     user.updateProfile({
 
         displayName: un,
-        photoURL: pp,
-        //phoneNumber: userNumber
+        photoURL: pp.name,
 
         }).then(function() {
         window.location.href = "dashboard.html";
@@ -82,47 +71,91 @@ function logOutUser(){
 
 }
 
+function savePic(un,pp){
+
+    storageRef.child(`images/${un}/${pp.name}`).put(pp); 
+
+}
+
  function writeUserData(){
 
     var userName = document.getElementById("sign-up-username").value;
-    //var phoneNumber = document.getElementById("sign-up-number").value;
-    var profilePic = document.getElementById("sign-up-pic").value;
-
-    database.ref(`usernames/${userName}`).set({
-
-        username: userName,
-        //phonenumber: phoneNumber,
-        profilepic: profilePic
-
-    });
-
+    var profilePic = document.getElementById("sign-up-pic").files[0];
+    savePic(userName,profilePic);
     setUserName(userName,profilePic);
 
 }
 
-function isUserLoggedIn(){
-        return firebase.auth().onAuthStateChanged(function(user) {
-        return user;
-      })
-}
-
-
 function renderAccount(){
 
-    if(isUserLoggedIn != null){
-
-        firebase.auth().onAuthStateChanged(function(user) {
-            console.log(user);
-            //console.log(user.phoneNumber);
-            console.log(user.photoURL);
-            var userName = user.displayName;
-            var greeting = document.getElementById("greeting");
-            greeting.innerHTML = `Welcome back ${userName}!`;
-
-          });
-
-        }else{
+firebase.auth().onAuthStateChanged(function(user){
+    console.log(user);
+    if(user == null){
         window.location.href = "index.html";
-        return;
+    }else{
+            var userName = user.displayName;
+            var profilePic = user.photoURL;
+            const storageService = firebase.storage();
+            const storageRef = storageService.ref();
+            storageRef.child(`images/${userName}/${profilePic}`).getDownloadURL().then(function(url){
+                document.querySelector('img').src = url;
+            }).catch(function(error){
+                alert(error);
+            });
+            var greeting = document.getElementById("greeting");
+            greeting.innerHTML = `Welcome back<br> ${userName}!`;
+
     }
+});
 }
+
+function addTask(){
+
+    var task = document.getElementById("task").value;
+    var dueDate = document.getElementById("due-date").value;
+    var alertFrequency = document.getElementById("alert-frequency").value;
+    var time = document.getElementById("time").value;
+
+    if(task == "" || dueDate == "" || alertFrequency == "" || time == ""){
+        alert("all fields are required to add task");
+    }else{
+        var user = firebase.auth().currentUser;
+        firebase.database().ref(`usernames/${user.displayName}/tasks/${task}`).set({
+            Duedate:dueDate,
+            Time:time,
+            AlertFrequency:alertFrequency
+        });
+    }
+
+}
+
+function listenForAddedTasks(){
+
+    var tasksBox = document.getElementById("tasks");
+    var tasks = "";
+    var user = firebase.auth().currentUser;
+    var dbTasks = firebase.database().ref(`usernames/${user.displayName}/tasks/`);
+
+    dbTasks.on('value',function(snapshot){
+
+        while(tasksBox.firstChild){
+            tasksBox.removeChild(tasksBox.firstChild);
+        }
+
+    snapshot.forEach(function(task){
+        var toDoItem = task;
+        var dueDate = task.Duedate;
+        var time = task.Time;
+
+        tasks += `<tr>
+                    <td>${toDoItem}</td>
+                    <td>${dueDate}</td>
+                    <td>${time}</td>
+                    <td><input type="checkbox" class="checkbox"></td>
+                    </tr>`
+
+        tasksBox.innerHTML = tasks;
+
+    });
+});
+};

@@ -123,3 +123,24 @@ footer{
     cursor: pointer;
 }
 
+.dashboard-pic{
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+.task-scheduler-box{
+    border:1px solid black;
+    border-radius:10px;
+    padding:20px;
+    margin:0 auto;
+    width:400px;
+    max-height: 400px;
+}
+
+.task-scheduler-box label{
+    margin:10px;
+}
+
+#schedule-task-button{
+    margin:20px;
+}
