@@ -4,52 +4,59 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" href="style.css">
         <title>
-        My Rememinders
+        Dashboard
         </title>
     </head>
-    <body>
-    <button onclick="logOutUser()" type="button">Logout</button><br><br>
-        <div class="container">
-                    <h2 class="display-3 text-center">Merry Mac's Rememinders</h2><br>
-                    <p class="lead text-center">Get Meming-ful Motivation to get SH*T done!</p>
+    <body id="dashboard-page" onload="renderAccount()" class="dashboard-body bg-dark">
+    <p class="logOut" onclick="logOutUser()">Logout</p>
+        <div class="container text-center">
+                <h1 id="greeting" class="greeting"></h1><br>
                     <div class="row">
-                        <form id="form">
-                            <div class="input-group">
-                                <input id="input" class="form-control" placeholder="Add a Reminder" value="Add a Task">
-                                <input required="" type="text" class="form-control" placeholder="Complete this by:" onfocus="(this.type='date')"/>
+                            <img class="dashboard-pic shadow-lg mt-5" src="" height="400px" width="400px">
+                            <div class="task-scheduler-box shadow-lg mt-5">
+                                <label for="task">Task</label>
+                                <input required="true" id="task" name="task" class="form-control" placeholder="Pay the contractor">
+                                <label for="due-date">Due-date</label>
+                                <input id="due-date" name="due-date" required="true" type="date" class="form-control"/>
+                                <label for="time">Time Due</label>
+                                <input type="time" id="time" name="time" value="21:35" class="form-control">
+                                <label for="alert-frequency">Alert</label>
+                                <select required="true" name="alert-frequency" id="alert-frequency">
+                                <option>Day before</option>
+                                <option>Hour before</option>
+                                <option>30 Minutes before</option>
+                                </select>
                                 <span>
-                                    <button id="btn" type="button" class="btn btn-primary">Schedule Remimder</button><br><br>
+                                    <button onclick="addTask()" id="schedule-task-button" class="btn btn-secondary shadow-lg">Schedule Task</button>
                                 </span>
-                            </div>			     
-                        </form>
-                    </div>
-                    <hr>
-            <div class="currentList"><br>	
-                    <h2>Current List of Sh*T to Do!</h2>
-                    <div class="table table-hover">
+                            </div>	
+                    </div>		
+
+            <div class="currentList mt-5"><br>	
+                    <h2>My Tasks</h2>
+                    <div class="table table-hover mt-5">
                             <table style="width:100%">
                                 <thead class="thead-light">
                                     <tr>
                                       <th>Task</th>
-                                      <th>Due by:</th> 
+                                      <th>Date-due</th> 
+                                      <th>Time-due</th> 
+                                      <th>Alert</th>
                                       <th>Complete?</th>
                                     </tr>
                                 </thead>
-                                    <tr>
+                                <div onload = "listenForAddedTasks()" id = "tasks">
+                                    <!-- <tr>
                                         <td>Girl, wash your face</td>
-                                        <td>November 20th, 2018</td> 
+                                        <td>November 20th, 2018</td>
+                                        <td>30 minutes before</td> 
                                         <td><input type="checkbox" class="checkbox"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Go to the grocery!</td>
-                                        <td>November 30, 2018</td> 
-                                        <td><input type="checkbox" class="checkbox"></td>
-                                    </tr>
+                                    </tr> -->
+                                </div>
+                            </table>
                     </div>	                
             </div>
         </div>
-
-    </body>
 
         <script src="main.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase.js"></script>
@@ -63,10 +70,13 @@
             messagingSenderId: "966818827461"
         };
         firebase.initializeApp(config);
+        const storageService = firebase.storage();
+        const storageRef = storageService.ref();
         </script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    </body>
 </html>
 
 
