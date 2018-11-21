@@ -20,8 +20,8 @@ function showLoginForm(){
 
 function createNewAccount(){
 
-        email = document.getElementById("sign-up-email").value;
-        password = document.getElementById("sign-up-password").value;     
+        var email = document.getElementById("sign-up-email").value;
+        var password = document.getElementById("sign-up-password").value;     
         firebase.auth().createUserWithEmailAndPassword(email, password,).then(function(){
         writeUserData();
         }).catch(function(error) {
@@ -32,8 +32,8 @@ function createNewAccount(){
 
 function loginToExistingAccount(){
 
-        email = document.getElementById("login-email").value;
-        password = document.getElementById("login-password").value;
+        var email = document.getElementById("login-email").value;
+        var password = document.getElementById("login-password").value;
         firebase.auth().signInWithEmailAndPassword(email, password).then(function(){
         window.location.href = "dashboard.html";
         }).catch(function(error) {
@@ -89,7 +89,6 @@ function savePic(un,pp){
 function renderAccount(){
 
 firebase.auth().onAuthStateChanged(function(user){
-    console.log(user);
     if(user == null){
         window.location.href = "index.html";
     }else{
@@ -121,6 +120,7 @@ function addTask(){
     }else{
         var user = firebase.auth().currentUser;
         firebase.database().ref(`usernames/${user.displayName}/tasks/${task}`).set({
+            Task:task,
             Duedate:dueDate,
             Time:time,
             AlertFrequency:alertFrequency
@@ -129,13 +129,17 @@ function addTask(){
 
 }
 
-function listenForAddedTasks(){
+firebase.auth().onAuthStateChanged(function(user){
 
+    listenForAddedTasks(user);
+
+});
+
+function listenForAddedTasks(user){
     var tasksBox = document.getElementById("tasks");
     var tasks = "";
-    var user = firebase.auth().currentUser;
-    var dbTasks = firebase.database().ref(`usernames/${user.displayName}/tasks/`);
-
+    var path = `usernames/${user.displayName}/tasks/`;
+    var dbTasks = firebase.database().ref(path);
     dbTasks.on('value',function(snapshot){
 
         while(tasksBox.firstChild){
@@ -143,19 +147,53 @@ function listenForAddedTasks(){
         }
 
     snapshot.forEach(function(task){
-        var toDoItem = task;
-        var dueDate = task.Duedate;
-        var time = task.Time;
+        var toDoItem = task.val().Task;
+        var dueDate = task.val().Duedate;
+        var time = task.val().Time;
+        var alertFrequency = task.val().AlertFrequency;
 
-        tasks += `<tr>
-                    <td>${toDoItem}</td>
-                    <td>${dueDate}</td>
-                    <td>${time}</td>
-                    <td><input type="checkbox" class="checkbox"></td>
-                    </tr>`
+        tasks += `<div class="row rendered-list">
+                    <input onchange = "showSaveButton()" id = "to-do-item" type="text" value = "${toDoItem}" >
+                    <input onchange = "showSaveButton()" id = "to-do-date" type="date" value = "${dueDate}" >
+                    <input onchange = "showSaveButton()" id = "to-do-time" type="time" value = "${time}" >
+                    <select onchange = "showSaveButton()" required="true" name="alert-frequency-set" id="alert-frequency-set">
+                    <option>on:${alertFrequency}</option>
+                    <option>1 Day prior</option>
+                    <option>1 Hour prior</option>
+                    <option>30 min prior</option>
+                    </select>
+                    <input onclick = "showArchiveCompletedButton()" type="checkbox" class="mt-4" style="margin:0 auto;">
+                    </div>`;
 
         tasksBox.innerHTML = tasks;
-
     });
 });
 };
+
+function showSaveButton(){
+var saveButton = document.getElementById("save-changes-button");
+saveButton.style.setProperty("display","inline");
+}
+
+function showArchiveCompletedButton(){
+    var archiveCompletedButton = document.getElementById("archive-completed-button");
+    archiveCompletedButton.style.setProperty("display","block");
+}
+function showArchiveButton(){
+    var taskArchiveButton = document.getElementById("view-task-archive-button");
+    taskArchiveButton.style.setProperty("display","block");
+}
+
+function viewArchive(){
+    var viewTaskArchiveButton = document.getElementById("view-task-archive-button");
+    var myTasksHeader = document.getElementById("my-tasks-header");
+    var myTasks = document.getElementById("current-list");
+    var myTasksButton = document.getElementById("my-tasks-button");
+    var taskArchiveHeader = document.getElementById("task-archive-header");
+
+    viewTaskArchiveButton.style.setProperty("display","none");
+    myTasksButton.style.setProperty("display","block");
+    myTasksHeader.style.setProperty("display","none");
+    myTasks.style.setProperty("display","none");
+    taskArchiveHeader.style.setProperty("display","block");
+}

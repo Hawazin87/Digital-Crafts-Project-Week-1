@@ -9,6 +9,7 @@
     </head>
     <body id="dashboard-page" onload="renderAccount()" class="dashboard-body bg-dark">
     <p class="logOut" onclick="logOutUser()">Logout</p>
+    <div class="spacer50"></div>
         <div class="container text-center">
                 <h1 id="greeting" class="greeting"></h1><br>
                     <div class="row">
@@ -22,9 +23,9 @@
                                 <input type="time" id="time" name="time" value="21:35" class="form-control">
                                 <label for="alert-frequency">Alert</label>
                                 <select required="true" name="alert-frequency" id="alert-frequency">
-                                <option>Day before</option>
-                                <option>Hour before</option>
-                                <option>30 Minutes before</option>
+                                <option>1 day prior</option>
+                                <option>1 Hour prior</option>
+                                <option>30 min prior</option>
                                 </select>
                                 <span>
                                     <button onclick="addTask()" id="schedule-task-button" class="btn btn-secondary shadow-lg">Schedule Task</button>
@@ -32,33 +33,28 @@
                             </div>	
                     </div>		
 
-            <div class="currentList mt-5"><br>	
-                    <h2>My Tasks</h2>
+            <div id = "current-list" class="currentList mt-5"><br>	
+                    <h2 id = "my-tasks-header">My Tasks</h2>
+                    <h2 id = "task-archive-header" style="display:none;">Task Archive</h2>
+                    <div class="spacer25"></div>
+                    <div id="save-changes-button" onclick="updateTasks()"  class="btn btn-secondary mb-2" style="display:none;">Save changes</div><br>
+                    <div id="my-tasks-button" onclick="viewTasks()"  class="btn btn-secondary mb-2" style="display:none;">My Tasks</div><br>
+                    <div id="view-task-archive-button" onclick="viewArchive()" class="btn btn-secondary mb-2" >View Task Archive</div><br>
+                    <div id="archive-completed-button" class="btn btn-secondary mt-2" onclick="archiveCompleted()" style="display:none;">Archive completed tasks</div>
                     <div class="table table-hover mt-5">
-                            <table style="width:100%">
-                                <thead class="thead-light">
-                                    <tr>
-                                      <th>Task</th>
-                                      <th>Date-due</th> 
-                                      <th>Time-due</th> 
-                                      <th>Alert</th>
-                                      <th>Complete?</th>
-                                    </tr>
-                                </thead>
-                                <div onload = "listenForAddedTasks()" id = "tasks">
-                                    <!-- <tr>
-                                        <td>Girl, wash your face</td>
-                                        <td>November 20th, 2018</td>
-                                        <td>30 minutes before</td> 
-                                        <td><input type="checkbox" class="checkbox"></td>
-                                    </tr> -->
-                                </div>
-                            </table>
+                          <div class="row list-heading shadow-lg mb-3" >
+                            <p>Task</p>
+                            <p>Due Date</p>
+                            <p>Due Time</p>
+                            <p>Alert</p>
+                            <p>Done?</p>
+                          </div>
+                            <div id = "tasks">
+                            <!--Where tasks will populate-->
+                            </div>
                     </div>	                
             </div>
         </div>
-
-        <script src="main.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase.js"></script>
         <script>
         var config = {
@@ -73,6 +69,7 @@
         const storageService = firebase.storage();
         const storageRef = storageService.ref();
         </script>
+        <script src="main.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
