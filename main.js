@@ -25,11 +25,13 @@ function createNewAccount(){
         
         email = document.getElementById("sign-up-email").value;
         password = document.getElementById("sign-up-password").value; 
+        //need to format function to format phone number
         var phoneNumber ="+12257183339"//document.getElementById("sign-up-number").value;
-        
-        
-        
 
+        //(see app.js)
+        //savePhoneNumber(phoneNumber);
+        
+    
         firebase.auth().languageCode = 'en';
         // To apply the default browser preference instead of explicitly setting it.
         // firebase.auth().useDeviceLanguage();  
@@ -47,17 +49,21 @@ function createNewAccount(){
         var code = "123456";
         firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
             .then(function (confirmationResult) {
-            // SMS sent. Prompt user to type the code from the message, then sign the
+            // SMS "sent". Prompt user to type the code from the message, then sign the
             // user in with confirmationResult.confirm(code).
             console.log("foo");
             captchaForm.style.setProperty("display","block");
             
             window.confirmationResult = confirmationResult;
             window.signingIn = false;
+            
             confirmationResult.confirm(code).then(function (result) {
                 console.log("hello")
             // User signed in successfully.
             var user = result.user;
+            // if you run without verifyEmail, you can see phone number "2257183339" saved in phoneNumber in the network under VerifyPhoneNumber
+            
+            //verifyEmail()
             // ...
             }).catch(function (error) {
             // User couldn't sign in (bad verification code?)
@@ -74,15 +80,17 @@ function createNewAccount(){
             
             });
 
-           /* firebase.auth().createUserWithEmailAndPassword(email, password,).then(function(){
-            writeUserData();
-            
-            }).catch(function(error) {
-            alert(error.message);
-            }); */
+           
     
 }
-
+function verifyEmail(){
+    firebase.auth().createUserWithEmailAndPassword(email, password,).then(function(){
+        writeUserData();
+        
+        }).catch(function(error) {
+        alert(error.message);
+        });
+}
 function verifyCode() {
     //e.preventDefault();
     var verificationCode=document.getElementById("verification-code");
@@ -155,16 +163,17 @@ function savePic(un,pp){
     storageRef.child(`images/${un}/${pp.name}`).put(pp); 
 
 }
-/*function savePhoneNumber(phone){
+//see app.js
+function savePhoneNumber(phone){
     var user = firebase.auth().currentUser;
-    var phoneRef = firebase.database().ref('messages');
+    var phoneRef = firebase.database().ref('phoneNumber');
     var newPhoneRef = phoneRef.push();
     newPhoneRef.set({
      
       phone:phone,
       
     });
-  }*/
+  }
 
  function writeUserData(){
 
