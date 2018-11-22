@@ -14,7 +14,9 @@ var showArchiveButton = document.getElementById("archive-completed-button");
 var archiveCompletedButton = document.getElementById("archive-completed-button");
 var saveButton = document.getElementById("save-changes-button");
 var taskArchiveButton = document.getElementById("view-task-archive-button");
-
+var archiveWrapper = document.getElementById("archive-wrapper");
+var archiveBox = document.getElementById("archive-box");
+var archiveListHeading = document.getElementById("archive-list-heading");
 
 function showSignUpForm(){
     signUpButton.style.setProperty("display","none");
@@ -137,8 +139,8 @@ function addTask(){
             Time:time,
             AlertFrequency:alertFrequency
         });
+        window.location.href = "dashboard.html";
     }
-
 }
 
 firebase.auth().onAuthStateChanged(function(user){
@@ -153,11 +155,13 @@ function listenForAddedTasks(user){
     var tasks = "";
     var path = `usernames/${user.displayName}/tasks/`;
     var dbTasks = firebase.database().ref(path);
-    dbTasks.on('value',function(snapshot){
+    
 
-        while(tasksBox.firstChild){
-            tasksBox.removeChild(tasksBox.firstChild);
-        }
+    while(tasksBox.firstChild){
+        tasksBox.removeChild(tasksBox.firstChild);
+    }
+
+    dbTasks.on('value',function(snapshot){
 
     snapshot.forEach(function(task){
         var toDoItem = task.val().Task;
@@ -175,7 +179,7 @@ function listenForAddedTasks(user){
                     <option>1 Hour prior</option>
                     <option>30 min prior</option>
                     </select>
-                    <input onclick = "showArchiveCompletedButton()" type="checkbox" class="mt-4" style="margin:0 auto;">
+                    <input onclick = "showArchiveCompletedButton()" type="checkbox" class="mt-4 check-box" style="margin:0 auto;">
                     </div>`;
 
         tasksBox.innerHTML = tasks;
@@ -204,6 +208,37 @@ function viewArchive(){
     myTasksButton.style.setProperty("display","block");
     saveChangesButton.style.setProperty("display","none");
     archiveCompletedButton.style.setProperty("display","none");
+    archiveWrapper.style.setProperty("display","block");
+    archiveBox.style.setProperty("display","block");
+    archiveListHeading.style.setProperty("display","flex");
+
+
+    firebase.auth().onAuthStateChanged(function(user){
+
+        var path = `usernames/${user.displayName}/archive/`;
+        var dbArchive = firebase.database().ref(path);
+
+        dbArchive.once('value').then(function(snapshot){
+            
+            snapshot.forEach(function(task){
+
+            var taskName = task.val().TaskName;
+            var taskDate = task.val().TaskDate;
+            var taskTime = task.val().TaskTimeDue;
+            var listOfArchivedTasks = "";
+
+            listOfArchivedTasks += `<div class="row rendered-archive">
+                <p>${taskName}</p>
+                <p>${taskDate}</p>
+                <p>${taskTime}</p>
+
+            </div>`
+
+            archiveBox.innerHTML += listOfArchivedTasks;
+
+            });
+        });
+        });
 
 }
 
@@ -212,3 +247,31 @@ function viewTasks(){
 window.location.href = "dashboard.html";
 
 }
+
+function archiveCompleted(){
+
+var checkBoxes = document.getElementsByClassName("check-box");
+var checkBoxesArray = Array.from(checkBoxes);
+checkBoxesArray.forEach(function(checkbox){
+    if(checkbox.checked == true){
+        firebase.auth().onAuthStateChanged(function(user){
+            var taskName = checkbox.parentElement.children[0].value;
+            var taskDueDate = checkbox.parentElement.children[1].value;
+            var taskDueTime = checkbox.parentElement.children[2].value;
+            var path = `usernames/${user.displayName}/archive/${taskName}`;
+            var archivesDb = firebase.database().ref(path);
+
+            archivesDb.set({
+                TaskName: taskName,
+                TaskDate: taskDueDate,
+                TaskTimeDue: taskDueTime
+            });
+            checkbox.parentElement.parentElement.removeChild(checkbox.parentElement);
+            var pathToTaskInTasksDir = firebase.database().ref(`usernames/${user.displayName}/tasks/${taskName}`);
+            
+            firebase.database().remove(tasksDb)
+        });
+ 
+
+}});
+};

@@ -177,13 +177,13 @@ footer{
 #schedule-task-button{
     margin:20px;
 }
-.list-heading{
+.list-heading, .archive-list-heading{
     margin:0 auto;
     background-color:#D3D3D3;
     border:1px solid black;
     border-radius:4px;
 }
-.list-heading p{
+.list-heading p, .archive-list-heading p{
     width:20%;
     margin:0 auto;
     padding:10px;
@@ -194,7 +194,11 @@ footer{
     1px 1px 0 #000;
 }
 
-.rendered-list{
+.archive-list-heading{
+    margin-top:-100px;
+}
+
+.rendered-list, .rendered-archive{
     margin:0 auto;
     background-color:#D3D3D3;
     border:1px solid black;
@@ -203,7 +207,7 @@ footer{
 
 }
 
-.rendered-list input, .rendered-list select {
+.rendered-list input, .rendered-list select{
     width:20%;
     text-align:center;
     padding:10px;
@@ -214,6 +218,18 @@ footer{
     border-radius:4px;
 
 }
+
+.rendered-archive p {
+    width:33%;
+    text-align:center;
+    padding:10px;
+    overflow:auto;
+    margin-bottom:0px;
+    color:black;
+    outline:none;
+    border-radius:4px;
+}
+
 
 .rendered-list input:hover, 
 .rendered-list input:focus, 
@@ -237,7 +253,8 @@ footer{
 #task-archive-header,
 #save-changes-button,
 #my-tasks-button,
-#archive-completed-button {
+#archive-completed-button,
+#archive-wrapper {
 
     display:none;
 
