@@ -3,6 +3,18 @@ var logInForm = document.getElementById("log-in-form");
 var signUpButton = document.getElementById("sign-up-button");
 var loginButton = document.getElementById("log-in-button");
 var authBox = document.getElementById("auth-box");
+var myTasksHeader = document.getElementById("my-tasks-header");
+var taskArchiveHeader = document.getElementById("task-archive-header");
+var listHeading = document.getElementById("list-heading");
+var taskItems = document.getElementById("tasks");
+var myTasksButton = document.getElementById("my-tasks-button");
+var viewTaskArchiveButton = document.getElementById("view-task-archive-button");
+var saveChangesButton = document.getElementById("save-changes-button");
+var showArchiveButton = document.getElementById("archive-completed-button");
+var archiveCompletedButton = document.getElementById("archive-completed-button");
+var saveButton = document.getElementById("save-changes-button");
+var taskArchiveButton = document.getElementById("view-task-archive-button");
+
 
 function showSignUpForm(){
     signUpButton.style.setProperty("display","none");
@@ -136,6 +148,7 @@ firebase.auth().onAuthStateChanged(function(user){
 });
 
 function listenForAddedTasks(user){
+
     var tasksBox = document.getElementById("tasks");
     var tasks = "";
     var path = `usernames/${user.displayName}/tasks/`;
@@ -171,29 +184,31 @@ function listenForAddedTasks(user){
 };
 
 function showSaveButton(){
-var saveButton = document.getElementById("save-changes-button");
-saveButton.style.setProperty("display","inline");
+    saveButton.style.setProperty("display","block");
 }
 
 function showArchiveCompletedButton(){
-    var archiveCompletedButton = document.getElementById("archive-completed-button");
     archiveCompletedButton.style.setProperty("display","block");
 }
 function showArchiveButton(){
-    var taskArchiveButton = document.getElementById("view-task-archive-button");
     taskArchiveButton.style.setProperty("display","block");
 }
 
 function viewArchive(){
-    var viewTaskArchiveButton = document.getElementById("view-task-archive-button");
-    var myTasksHeader = document.getElementById("my-tasks-header");
-    var myTasks = document.getElementById("current-list");
-    var myTasksButton = document.getElementById("my-tasks-button");
-    var taskArchiveHeader = document.getElementById("task-archive-header");
 
     viewTaskArchiveButton.style.setProperty("display","none");
-    myTasksButton.style.setProperty("display","block");
-    myTasksHeader.style.setProperty("display","none");
-    myTasks.style.setProperty("display","none");
+    myTasksHeader.style.setProperty("display", "none");
     taskArchiveHeader.style.setProperty("display","block");
+    listHeading.style.setProperty("display","none");
+    taskItems.style.setProperty("display","none");
+    myTasksButton.style.setProperty("display","block");
+    saveChangesButton.style.setProperty("display","none");
+    archiveCompletedButton.style.setProperty("display","none");
+
+}
+
+function viewTasks(){
+
+window.location.href = "dashboard.html";
+
 }

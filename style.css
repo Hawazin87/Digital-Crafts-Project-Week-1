@@ -95,6 +95,10 @@ footer{
     font-size:12px;
 }
 
+.spacer10{
+    height:10px;
+    width:100%;
+}
 .spacer25{
     height:25px;
     width:100%;
@@ -140,10 +144,34 @@ footer{
     margin:0 auto;
     width:400px;
     max-height: 400px;
+    background-color:#C0C0C0;
+
 }
 
 .task-scheduler-box label{
     margin:10px;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
+.task-scheduler-box input{
+    border:1px solid black;
+}
+
+.task-scheduler-box select:hover{
+   cursor: pointer;
+}
+
+.task-scheduler-box input:hover,
+.task-scheduler-box input:focus,
+.task-scheduler-box input:active{
+    border:1px solid black;
+    cursor: pointer;
+    background-color:#808080;
+    color:white;
 }
 
 #schedule-task-button{
@@ -197,7 +225,34 @@ footer{
     cursor: pointer;
 }
 
+#save-changes-button,
+#my-tasks-button,
+#view-task-archive-button,
 #archive-completed-button {
+    width:100%;
     max-width:220px;
     margin:0 auto;
+}
+
+#task-archive-header,
+#save-changes-button,
+#my-tasks-button,
+#archive-completed-button {
+
+    display:none;
+
+}
+
+input::-webkit-inner-spin-button, 
+input::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
 }

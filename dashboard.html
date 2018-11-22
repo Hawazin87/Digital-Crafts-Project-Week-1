@@ -16,7 +16,7 @@
                             <img class="dashboard-pic shadow-lg mt-5" src="" height="400px" width="400px">
                             <div class="task-scheduler-box shadow-lg mt-5">
                                 <label for="task">Task</label>
-                                <input required="true" id="task" name="task" class="form-control" placeholder="Pay the contractor">
+                                <input required="true" id="task" name="task" class="form-control" value="some task">
                                 <label for="due-date">Due-date</label>
                                 <input id="due-date" name="due-date" required="true" type="date" class="form-control"/>
                                 <label for="time">Time Due</label>
@@ -33,16 +33,19 @@
                             </div>	
                     </div>		
 
-            <div id = "current-list" class="currentList mt-5"><br>	
+            <div id = "current-list" class="currentList mt-5"><br>
                     <h2 id = "my-tasks-header">My Tasks</h2>
-                    <h2 id = "task-archive-header" style="display:none;">Task Archive</h2>
-                    <div class="spacer25"></div>
-                    <div id="save-changes-button" onclick="updateTasks()"  class="btn btn-secondary mb-2" style="display:none;">Save changes</div><br>
-                    <div id="my-tasks-button" onclick="viewTasks()"  class="btn btn-secondary mb-2" style="display:none;">My Tasks</div><br>
-                    <div id="view-task-archive-button" onclick="viewArchive()" class="btn btn-secondary mb-2" >View Task Archive</div><br>
-                    <div id="archive-completed-button" class="btn btn-secondary mt-2" onclick="archiveCompleted()" style="display:none;">Archive completed tasks</div>
-                    <div class="table table-hover mt-5">
-                          <div class="row list-heading shadow-lg mb-3" >
+                    <h2 id = "task-archive-header">Task Archive</h2>
+                    <div class="spacer10"></div>
+                    <div id="my-tasks-button" onclick="viewTasks()"  class="btn btn-secondary">My Tasks</div><br>
+                    <div class="spacer10"></div>
+                    <div id="view-task-archive-button" onclick="viewArchive()" class="btn btn-secondary" >View Task Archive</div><br>
+                    <div class="spacer10"></div>
+                    <div id="archive-completed-button" onclick="archiveCompleted()" class="btn btn-secondary">Archive completed tasks</div><br>                    
+                    <div id="save-changes-button" onclick="updateTasks()" class="btn btn-secondary">Save changes</div><br>
+
+                    <div class="table table-hover mt-1">
+                          <div id="list-heading" class="row list-heading shadow-lg mb-3" >
                             <p>Task</p>
                             <p>Due Date</p>
                             <p>Due Time</p>
