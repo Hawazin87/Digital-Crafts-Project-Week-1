@@ -260,18 +260,15 @@ checkBoxesArray.forEach(function(checkbox){
             var taskDueTime = checkbox.parentElement.children[2].value;
             var path = `usernames/${user.displayName}/archive/${taskName}`;
             var archivesDb = firebase.database().ref(path);
-
+            var pathToTaskInTasksDir = firebase.database().ref(`usernames/${user.displayName}/tasks/${taskName}`);
             archivesDb.set({
                 TaskName: taskName,
                 TaskDate: taskDueDate,
                 TaskTimeDue: taskDueTime
             });
+            pathToTaskInTasksDir.remove();
             checkbox.parentElement.parentElement.removeChild(checkbox.parentElement);
-            var pathToTaskInTasksDir = firebase.database().ref(`usernames/${user.displayName}/tasks/${taskName}`);
-            
-            firebase.database().remove(tasksDb)
         });
- 
-
-}});
+    }});
+    window.location.href="dashboard.html";
 };
