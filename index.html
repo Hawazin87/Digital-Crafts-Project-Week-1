@@ -38,9 +38,20 @@
                                     <input type="file" class="form-control" id="sign-up-pic" name="sign-up-pic" placeholder="" accept="image/*">
 
                                     <label for="sign-up-number">Phone-Number</label>
-                                    <input type="number" class="form-control" id="sign-up-number" name="sign-up-number" placeholder="111-222-3333">
+                                    <input type="text" class="form-control" id="sign-up-number" name="sign-up-number" placeholder="111-222-3333">
+                                    <div id="recaptcha-container" ></div>
+
+
+                                    <div id="verification-code-form" style="display:none;">
+                                    <label for="verficication">Enter Code From Phone!</label>
+                                    <input type="text" class="form-control"  id="verification-code" action="#"  name="sign-up-number" placeholder="123456">
+                                    <button  onclick="verifyCode()" id ="submit-verification" class=" mt-4 btn btn-secondary btn-block">Submit Code</button>
+                                    </div>
+
+                                   
+                        
                                 
-                                    <button  onclick="createNewAccount()" class=" mt-4 btn btn-secondary btn-block">Sign Up</button>
+                                    <button  onclick="createNewAccount()" id ="sign-up-button" class=" mt-4 btn btn-secondary btn-block">Sign Up</button>
                                     <button  onclick="cancel()" class=" mt-4 mb-4 btn btn-secondary btn-block">Cancel</button>
                         </div>
 
