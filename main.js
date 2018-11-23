@@ -17,6 +17,14 @@ var taskArchiveButton = document.getElementById("view-task-archive-button");
 var archiveWrapper = document.getElementById("archive-wrapper");
 var archiveBox = document.getElementById("archive-box");
 var archiveListHeading = document.getElementById("archive-list-heading");
+var convertFromMilitaryToStd = function (fourDigitTime){
+    var hours24 = parseInt(fourDigitTime.substring(0,2));
+    var hours = ((hours24 + 11) % 12) + 1;
+    var amPm = hours24 > 11 ? 'pm' : 'am';
+    var minutes = fourDigitTime.substring(2);
+
+    return hours + minutes + amPm;
+};
 
 function showSignUpForm(){
     signUpButton.style.setProperty("display","none");
@@ -192,7 +200,19 @@ function showSaveButton(){
 }
 
 function showArchiveCompletedButton(){
-    archiveCompletedButton.style.setProperty("display","block");
+    var checkBoxes = document.getElementsByClassName("check-box");
+    var checkBoxesArray = Array.from(checkBoxes);
+    var findCompletedTasks = checkBoxesArray.find(function(checkbox){
+        return checkbox.checked == true;
+    });
+
+   if(findCompletedTasks != undefined){
+        archiveCompletedButton.style.setProperty("display","block");
+   }else{
+        archiveCompletedButton.style.setProperty("display","none");
+       return;
+   }
+
 }
 function showArchiveButton(){
     taskArchiveButton.style.setProperty("display","block");
@@ -226,11 +246,12 @@ function viewArchive(){
             var taskDate = task.val().TaskDate;
             var taskTime = task.val().TaskTimeDue;
             var listOfArchivedTasks = "";
+            var convertedTime = convertFromMilitaryToStd(taskTime);
 
             listOfArchivedTasks += `<div class="row rendered-archive">
                 <p>${taskName}</p>
                 <p>${taskDate}</p>
-                <p>${taskTime}</p>
+                <p>${convertedTime}</p>
 
             </div>`
 
@@ -257,7 +278,7 @@ checkBoxesArray.forEach(function(checkbox){
         firebase.auth().onAuthStateChanged(function(user){
             var taskName = checkbox.parentElement.children[0].value;
             var taskDueDate = checkbox.parentElement.children[1].value;
-            var taskDueTime = checkbox.parentElement.children[2].value;
+            var taskDueTime = convertFromMilitaryToStd(checkbox.parentElement.children[2].value);
             var path = `usernames/${user.displayName}/archive/${taskName}`;
             var archivesDb = firebase.database().ref(path);
             var pathToTaskInTasksDir = firebase.database().ref(`usernames/${user.displayName}/tasks/${taskName}`);
@@ -272,3 +293,53 @@ checkBoxesArray.forEach(function(checkbox){
     }});
     window.location.href="dashboard.html";
 };
+
+function updateTasks(){
+
+    firebase.auth().onAuthStateChanged(function(user){
+
+        var renderedTasks = document.getElementsByClassName("rendered-list");
+        var renderedTasksArray = Array.from(renderedTasks);
+
+        renderedTasksArray.forEach(function(renderedTask){
+
+             var currentRenderedTaskName = renderedTask.children[0].value;
+             var currentRenderedTaskDueDate = renderedTask.children[1].value;
+             var currentRenderedTaskDueTime = renderedTask.children[2].value;
+             var currentRenderedTaskAlertFrequency = renderedTask.children[3].value;
+             var tasksDb = firebase.database().ref(`usernames/${user.displayName}/tasks/`);
+             console.log("task name: "+currentRenderedTaskName);
+             console.log("task due date: "+currentRenderedTaskDueDate);
+             console.log("task due time: "+currentRenderedTaskDueTime);
+             console.log("task alert frequency:  "+currentRenderedTaskAlertFrequency);
+            tasksDb.once('value',function(snapshot){
+                console.log("snapshot.val() below");
+                console.log(snapshot.val());
+                console.log("snapshot.val().task1 below");
+                console.log(snapshot.val().task1);
+                // console.log("key in snapshot.val() below");
+                // console.log(key in snapshot.val());
+                console.log("snapshot.val().task1.AlertFrequency below");
+                console.log(snapshot.val().task1.AlertFrequency);
+            snapshot.forEach(function(currentDbTask){
+                var currentDbTaskName = Object.keys(currentDbTask.val())[2];
+                var currentDbTaskDueDate = Object.keys(currentDbTask.val())[1];
+                var currentDbTaskDueTime = Object.keys(currentDbTask.val())[3];
+                var currentDbTaskAlertFrequency = Object.keys(currentDbTask.val())[0];
+                console.log("current db task name: " +currentDbTaskName);
+                console.log("current db task due date: " +currentDbTaskDueDate);
+                console.log("current db task due time: " +currentDbTaskDueTime);
+                console.log("current db task alert frequency: " +currentDbTaskAlertFrequency);
+            // currentDbTask.set({
+            //     currentDbTaskName: currentRenderedTaskName,
+            //     currentDbTaskDueDate: currentRenderedTaskDueDate,
+            //     currentDbTaskDueTime: currentRenderedTaskDueTime,
+            //     currentDbTaskAlertFrequency: currentRenderedTaskAlertFrequency
+            // });
+        });
+        });
+
+
+    });
+});
+}
