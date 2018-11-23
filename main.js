@@ -182,7 +182,7 @@ function listenForAddedTasks(user){
                     <input onchange = "showSaveButton()" id = "to-do-date" type="date" value = "${dueDate}" >
                     <input onchange = "showSaveButton()" id = "to-do-time" type="time" value = "${time}" >
                     <select onchange = "showSaveButton()" required="true" name="alert-frequency-set" id="alert-frequency-set">
-                    <option>on:${alertFrequency}</option>
+                    <option>${alertFrequency}</option>
                     <option>1 Day prior</option>
                     <option>1 Hour prior</option>
                     <option>30 min prior</option>
@@ -246,7 +246,7 @@ function viewArchive(){
             var taskDate = task.val().TaskDate;
             var taskTime = task.val().TaskTimeDue;
             var listOfArchivedTasks = "";
-            var convertedTime = convertFromMilitaryToStd(taskTime);
+            var convertedTime = taskTime;
 
             listOfArchivedTasks += `<div class="row rendered-archive">
                 <p>${taskName}</p>
@@ -278,7 +278,7 @@ checkBoxesArray.forEach(function(checkbox){
         firebase.auth().onAuthStateChanged(function(user){
             var taskName = checkbox.parentElement.children[0].value;
             var taskDueDate = checkbox.parentElement.children[1].value;
-            var taskDueTime = convertFromMilitaryToStd(checkbox.parentElement.children[2].value);
+            var taskDueTime = checkbox.parentElement.children[2].value;
             var path = `usernames/${user.displayName}/archive/${taskName}`;
             var archivesDb = firebase.database().ref(path);
             var pathToTaskInTasksDir = firebase.database().ref(`usernames/${user.displayName}/tasks/${taskName}`);
@@ -300,46 +300,31 @@ function updateTasks(){
 
         var renderedTasks = document.getElementsByClassName("rendered-list");
         var renderedTasksArray = Array.from(renderedTasks);
+        var index = 0;
+        var tasksDb = firebase.database().ref(`usernames/${user.displayName}/tasks/`);
 
-        renderedTasksArray.forEach(function(renderedTask){
-
-             var currentRenderedTaskName = renderedTask.children[0].value;
-             var currentRenderedTaskDueDate = renderedTask.children[1].value;
-             var currentRenderedTaskDueTime = renderedTask.children[2].value;
-             var currentRenderedTaskAlertFrequency = renderedTask.children[3].value;
-             var tasksDb = firebase.database().ref(`usernames/${user.displayName}/tasks/`);
-             console.log("task name: "+currentRenderedTaskName);
-             console.log("task due date: "+currentRenderedTaskDueDate);
-             console.log("task due time: "+currentRenderedTaskDueTime);
-             console.log("task alert frequency:  "+currentRenderedTaskAlertFrequency);
             tasksDb.once('value',function(snapshot){
-                console.log("snapshot.val() below");
-                console.log(snapshot.val());
-                console.log("snapshot.val().task1 below");
-                console.log(snapshot.val().task1);
-                // console.log("key in snapshot.val() below");
-                // console.log(key in snapshot.val());
-                console.log("snapshot.val().task1.AlertFrequency below");
-                console.log(snapshot.val().task1.AlertFrequency);
+
             snapshot.forEach(function(currentDbTask){
-                var currentDbTaskName = Object.keys(currentDbTask.val())[2];
-                var currentDbTaskDueDate = Object.keys(currentDbTask.val())[1];
-                var currentDbTaskDueTime = Object.keys(currentDbTask.val())[3];
-                var currentDbTaskAlertFrequency = Object.keys(currentDbTask.val())[0];
-                console.log("current db task name: " +currentDbTaskName);
-                console.log("current db task due date: " +currentDbTaskDueDate);
-                console.log("current db task due time: " +currentDbTaskDueTime);
-                console.log("current db task alert frequency: " +currentDbTaskAlertFrequency);
-            // currentDbTask.set({
-            //     currentDbTaskName: currentRenderedTaskName,
-            //     currentDbTaskDueDate: currentRenderedTaskDueDate,
-            //     currentDbTaskDueTime: currentRenderedTaskDueTime,
-            //     currentDbTaskAlertFrequency: currentRenderedTaskAlertFrequency
-            // });
+
+                var currentRenderedTaskName = renderedTasksArray[index].children[0].value;
+                var currentRenderedTaskDueDate = renderedTasksArray[index].children[1].value;
+                var currentRenderedTaskDueTime = renderedTasksArray[index].children[2].value;
+                var currentRenderedTaskAlertFrequency = renderedTasksArray[index].children[3].value;
+                var currentDbTask = currentDbTask.val().Task;
+                var pathToCurrentDbTask = firebase.database().ref(`usernames/${user.displayName}/tasks/${currentDbTask}`);
+                pathToCurrentDbTask.remove();
+                var pathToUpdatedDbTask = firebase.database().ref(`usernames/${user.displayName}/tasks/${currentRenderedTaskName}`);
+                console.log(currentRenderedTaskDueDate);
+                pathToUpdatedDbTask.set({
+                        Task: currentRenderedTaskName,
+                        DueDate: currentRenderedTaskDueDate,
+                        Time: currentRenderedTaskDueTime,
+                        AlertFrequency: currentRenderedTaskAlertFrequency
+                    });
+                index++;
         });
         });
-
-
     });
-});
-}
+    window.location.href = "dashboard.html";
+};
