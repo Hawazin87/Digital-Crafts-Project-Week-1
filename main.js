@@ -141,6 +141,8 @@ function addTask(){
 
 }
 
+
+
 firebase.auth().onAuthStateChanged(function(user){
 
     listenForAddedTasks(user);
@@ -177,11 +179,37 @@ function listenForAddedTasks(user){
                     </select>
                     <input onclick = "showArchiveCompletedButton()" type="checkbox" class="mt-4" style="margin:0 auto;">
                     </div>`;
+                   
 
         tasksBox.innerHTML = tasks;
+
     });
 });
 };
+
+function updateTasks(){
+
+    var archTask = document.getElementById("task").value;
+    var dueDate = document.getElementById("due-date").value;
+    var time = document.getElementById("time").value;
+    var ref = firebase.database().ref(`usernames/${user.displayName}/tasks/`);
+
+        ref.on("value", function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+        var childData = childSnapshot.val();
+        var ids=childData.id;
+        console.log(ids);  
+        });
+        });
+        var user = firebase.auth().currentUser;
+        firebase.database().ref(`usernames/${user.displayName}/archive/${archTask}`).set({
+            Archtask:archTask,
+            Duedate:dueDate,
+            Time:time
+        });  
+}
+
+
 
 function showSaveButton(){
     saveButton.style.setProperty("display","block");
@@ -212,3 +240,6 @@ function viewTasks(){
 window.location.href = "dashboard.html";
 
 }
+
+
+
