@@ -192,28 +192,27 @@ firebase.auth().onAuthStateChanged(function(up){
 });
 
 function updateTasks(up){
-    // var path = `usernames/${up.displayName}/tasks/`;
-    // console.log(path);
-    var archTask = document.getElementById("task").value;
-    var dueDate = document.getElementById("due-date").value;
-    var time = document.getElementById("time").value;
-    var dbArchive = firebase.database().ref(`usernames/${up.displayName}/tasks/`);
-    console.log(up.displayName);
-   dbArchive.orderByValue().on("value", function(snapshot) {
-    snapshot.forEach(function(data) {
-        
-        console.log(data.key);
+    var archTask = document.getElementById("to-do-item");
+    var dueDate = document.getElementById("to-do-date");
+    var time = document.getElementById("to-do-time");
+
+    firebase.database().ref(`usernames/${up.displayName}/tasks/`).orderByValue().on("value", function(snapshot) {
+        snapshot.forEach(function(data) {
+            
+            console.log(data.key);
+        });
     });
-    
-});
-
-firebase.database().ref(`usernames/${up.displayName}/archive/`).set({
-     Archtask:archTask,
-    // Duedate:dueDate,
-    // Time:time
-}); 
-
+        console.log(archTask);
+        var user = firebase.auth().currentUser;
+        firebase.database().ref(`usernames/${user.displayName}/archive/${archTask}`).set({
+            Archtask:archTask,
+            Duedate:dueDate,
+            Time:time
+        });  
+          
 }  
+
+
  
 
 
