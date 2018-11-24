@@ -143,7 +143,7 @@ function addTask(){
         var user = firebase.auth().currentUser;
         firebase.database().ref(`usernames/${user.displayName}/tasks/${task}`).set({
             Task:task,
-            Duedate:dueDate,
+            DueDate:dueDate,
             Time:time,
             AlertFrequency:alertFrequency
         });
@@ -172,15 +172,16 @@ function listenForAddedTasks(user){
     dbTasks.on('value',function(snapshot){
 
     snapshot.forEach(function(task){
+        console.log(task.val())
         var toDoItem = task.val().Task;
-        var dueDate = task.val().Duedate;
+        var dueDate = task.val().DueDate;
         var time = task.val().Time;
         var alertFrequency = task.val().AlertFrequency;
 
         tasks += `<div class="row rendered-list">
                     <input onchange = "showSaveButton()" id = "to-do-item" type="text" value = "${toDoItem}" >
                     <input onchange = "showSaveButton()" id = "to-do-date" type="date" value = "${dueDate}" >
-                    <input onchange = "showSaveButton()" id = "to-do-time" type="time" value = "${time}" >
+                    <input onchange = "showSaveButton()" id = "to-do-time" type="time" value = "${time}">
                     <select onchange = "showSaveButton()" required="true" name="alert-frequency-set" id="alert-frequency-set">
                     <option>${alertFrequency}</option>
                     <option>1 Day prior</option>
@@ -244,14 +245,13 @@ function viewArchive(){
 
             var taskName = task.val().TaskName;
             var taskDate = task.val().TaskDate;
-            var taskTime = task.val().TaskTimeDue;
+            var taskTime = convertFromMilitaryToStd(task.val().TaskTimeDue);
             var listOfArchivedTasks = "";
-            var convertedTime = taskTime;
 
             listOfArchivedTasks += `<div class="row rendered-archive">
                 <p>${taskName}</p>
                 <p>${taskDate}</p>
-                <p>${convertedTime}</p>
+                <p>${taskTime}</p>
 
             </div>`
 
@@ -315,7 +315,6 @@ function updateTasks(){
                 var pathToCurrentDbTask = firebase.database().ref(`usernames/${user.displayName}/tasks/${currentDbTask}`);
                 pathToCurrentDbTask.remove();
                 var pathToUpdatedDbTask = firebase.database().ref(`usernames/${user.displayName}/tasks/${currentRenderedTaskName}`);
-                console.log(currentRenderedTaskDueDate);
                 pathToUpdatedDbTask.set({
                         Task: currentRenderedTaskName,
                         DueDate: currentRenderedTaskDueDate,
