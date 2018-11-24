@@ -120,6 +120,7 @@ firebase.auth().onAuthStateChanged(function(user){
 });
 }
 
+
 function addTask(){
 
     var task = document.getElementById("task").value;
@@ -136,6 +137,7 @@ function addTask(){
             Duedate:dueDate,
             Time:time,
             AlertFrequency:alertFrequency
+            
         });
     }
 
@@ -143,14 +145,12 @@ function addTask(){
 
 
 
+
 firebase.auth().onAuthStateChanged(function(user){
-
     listenForAddedTasks(user);
-
 });
 
 function listenForAddedTasks(user){
-
     var tasksBox = document.getElementById("tasks");
     var tasks = "";
     var path = `usernames/${user.displayName}/tasks/`;
@@ -182,32 +182,42 @@ function listenForAddedTasks(user){
                    
 
         tasksBox.innerHTML = tasks;
-
     });
 });
 };
 
-function updateTasks(){
 
+firebase.auth().onAuthStateChanged(function(up){
+    updateTasks(up);
+});
+
+function updateTasks(up){
+    // var path = `usernames/${up.displayName}/tasks/`;
+    // console.log(path);
     var archTask = document.getElementById("task").value;
     var dueDate = document.getElementById("due-date").value;
     var time = document.getElementById("time").value;
-    var ref = firebase.database().ref(`usernames/${user.displayName}/tasks/`);
+    var dbArchive = firebase.database().ref(`usernames/${up.displayName}/tasks/`);
+    console.log(up.displayName);
+   dbArchive.orderByValue().on("value", function(snapshot) {
+    snapshot.forEach(function(data) {
+        
+        console.log(data.key);
+    });
+    
+});
 
-        ref.on("value", function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-        var childData = childSnapshot.val();
-        var ids=childData.id;
-        console.log(ids);  
-        });
-        });
-        var user = firebase.auth().currentUser;
-        firebase.database().ref(`usernames/${user.displayName}/archive/${archTask}`).set({
-            Archtask:archTask,
-            Duedate:dueDate,
-            Time:time
-        });  
-}
+firebase.database().ref(`usernames/${up.displayName}/archive/`).set({
+     Archtask:archTask,
+    // Duedate:dueDate,
+    // Time:time
+}); 
+
+}  
+ 
+
+
+  
 
 
 
