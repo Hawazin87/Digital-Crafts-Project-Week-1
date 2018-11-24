@@ -14,7 +14,17 @@ var showArchiveButton = document.getElementById("archive-completed-button");
 var archiveCompletedButton = document.getElementById("archive-completed-button");
 var saveButton = document.getElementById("save-changes-button");
 var taskArchiveButton = document.getElementById("view-task-archive-button");
+var archiveWrapper = document.getElementById("archive-wrapper");
+var archiveBox = document.getElementById("archive-box");
+var archiveListHeading = document.getElementById("archive-list-heading");
+var convertFromMilitaryToStd = function (fourDigitTime){
+    var hours24 = parseInt(fourDigitTime.substring(0,2));
+    var hours = ((hours24 + 11) % 12) + 1;
+    var amPm = hours24 > 11 ? 'pm' : 'am';
+    var minutes = fourDigitTime.substring(2);
 
+    return hours + minutes + amPm;
+};
 
 function showSignUpForm(){
     signUpButton.style.setProperty("display","none");
@@ -134,13 +144,13 @@ function addTask(){
         var user = firebase.auth().currentUser;
         firebase.database().ref(`usernames/${user.displayName}/tasks/${task}`).set({
             Task:task,
-            Duedate:dueDate,
+            DueDate:dueDate,
             Time:time,
             AlertFrequency:alertFrequency
             
         });
+        window.location.href = "dashboard.html";
     }
-
 }
 
 
@@ -155,29 +165,32 @@ function listenForAddedTasks(user){
     var tasks = "";
     var path = `usernames/${user.displayName}/tasks/`;
     var dbTasks = firebase.database().ref(path);
+    
+
+    while(tasksBox.firstChild){
+        tasksBox.removeChild(tasksBox.firstChild);
+    }
+
     dbTasks.on('value',function(snapshot){
 
-        while(tasksBox.firstChild){
-            tasksBox.removeChild(tasksBox.firstChild);
-        }
-
     snapshot.forEach(function(task){
+        console.log(task.val())
         var toDoItem = task.val().Task;
-        var dueDate = task.val().Duedate;
+        var dueDate = task.val().DueDate;
         var time = task.val().Time;
         var alertFrequency = task.val().AlertFrequency;
 
         tasks += `<div class="row rendered-list">
                     <input onchange = "showSaveButton()" id = "to-do-item" type="text" value = "${toDoItem}" >
                     <input onchange = "showSaveButton()" id = "to-do-date" type="date" value = "${dueDate}" >
-                    <input onchange = "showSaveButton()" id = "to-do-time" type="time" value = "${time}" >
+                    <input onchange = "showSaveButton()" id = "to-do-time" type="time" value = "${time}">
                     <select onchange = "showSaveButton()" required="true" name="alert-frequency-set" id="alert-frequency-set">
-                    <option>on:${alertFrequency}</option>
+                    <option>${alertFrequency}</option>
                     <option>1 Day prior</option>
                     <option>1 Hour prior</option>
                     <option>30 min prior</option>
                     </select>
-                    <input onclick = "showArchiveCompletedButton()" type="checkbox" class="mt-4" style="margin:0 auto;">
+                    <input onclick = "showArchiveCompletedButton()" type="checkbox" class="mt-4 check-box" style="margin:0 auto;">
                     </div>`;
                    
 
@@ -187,45 +200,24 @@ function listenForAddedTasks(user){
 };
 
 
-firebase.auth().onAuthStateChanged(function(up){
-    updateTasks(up);
-});
-
-function updateTasks(up){
-    var archTask = document.getElementById("to-do-item");
-    var dueDate = document.getElementById("to-do-date");
-    var time = document.getElementById("to-do-time");
-
-    firebase.database().ref(`usernames/${up.displayName}/tasks/`).orderByValue().on("value", function(snapshot) {
-        snapshot.forEach(function(data) {
-            
-            console.log(data.key);
-        });
-    });
-        console.log(archTask);
-        var user = firebase.auth().currentUser;
-        firebase.database().ref(`usernames/${user.displayName}/archive/${archTask}`).set({
-            Archtask:archTask,
-            Duedate:dueDate,
-            Time:time
-        });  
-          
-}  
-
-
- 
-
-
-  
-
-
-
 function showSaveButton(){
     saveButton.style.setProperty("display","block");
 }
 
 function showArchiveCompletedButton(){
-    archiveCompletedButton.style.setProperty("display","block");
+    var checkBoxes = document.getElementsByClassName("check-box");
+    var checkBoxesArray = Array.from(checkBoxes);
+    var findCompletedTasks = checkBoxesArray.find(function(checkbox){
+        return checkbox.checked == true;
+    });
+
+   if(findCompletedTasks != undefined){
+        archiveCompletedButton.style.setProperty("display","block");
+   }else{
+        archiveCompletedButton.style.setProperty("display","none");
+       return;
+   }
+
 }
 function showArchiveButton(){
     taskArchiveButton.style.setProperty("display","block");
@@ -241,6 +233,37 @@ function viewArchive(){
     myTasksButton.style.setProperty("display","block");
     saveChangesButton.style.setProperty("display","none");
     archiveCompletedButton.style.setProperty("display","none");
+    archiveWrapper.style.setProperty("display","block");
+    archiveBox.style.setProperty("display","block");
+    archiveListHeading.style.setProperty("display","flex");
+
+
+    firebase.auth().onAuthStateChanged(function(user){
+
+        var path = `usernames/${user.displayName}/archive/`;
+        var dbArchive = firebase.database().ref(path);
+
+        dbArchive.once('value').then(function(snapshot){
+            
+            snapshot.forEach(function(task){
+
+            var taskName = task.val().TaskName;
+            var taskDate = task.val().TaskDate;
+            var taskTime = convertFromMilitaryToStd(task.val().TaskTimeDue);
+            var listOfArchivedTasks = "";
+
+            listOfArchivedTasks += `<div class="row rendered-archive">
+                <p>${taskName}</p>
+                <p>${taskDate}</p>
+                <p>${taskTime}</p>
+
+            </div>`
+
+            archiveBox.innerHTML += listOfArchivedTasks;
+
+            });
+        });
+        });
 
 }
 
@@ -250,5 +273,61 @@ window.location.href = "dashboard.html";
 
 }
 
+function archiveCompleted(){
 
+var checkBoxes = document.getElementsByClassName("check-box");
+var checkBoxesArray = Array.from(checkBoxes);
+checkBoxesArray.forEach(function(checkbox){
+    if(checkbox.checked == true){
+        firebase.auth().onAuthStateChanged(function(user){
+            var taskName = checkbox.parentElement.children[0].value;
+            var taskDueDate = checkbox.parentElement.children[1].value;
+            var taskDueTime = checkbox.parentElement.children[2].value;
+            var path = `usernames/${user.displayName}/archive/${taskName}`;
+            var archivesDb = firebase.database().ref(path);
+            var pathToTaskInTasksDir = firebase.database().ref(`usernames/${user.displayName}/tasks/${taskName}`);
+            archivesDb.set({
+                TaskName: taskName,
+                TaskDate: taskDueDate,
+                TaskTimeDue: taskDueTime
+            });
+            pathToTaskInTasksDir.remove();
+            checkbox.parentElement.parentElement.removeChild(checkbox.parentElement);
+        });
+    }});
+    window.location.href="dashboard.html";
+};
 
+function updateTasks(){
+
+    firebase.auth().onAuthStateChanged(function(user){
+
+        var renderedTasks = document.getElementsByClassName("rendered-list");
+        var renderedTasksArray = Array.from(renderedTasks);
+        var index = 0;
+        var tasksDb = firebase.database().ref(`usernames/${user.displayName}/tasks/`);
+
+            tasksDb.once('value',function(snapshot){
+
+            snapshot.forEach(function(currentDbTask){
+
+                var currentRenderedTaskName = renderedTasksArray[index].children[0].value;
+                var currentRenderedTaskDueDate = renderedTasksArray[index].children[1].value;
+                var currentRenderedTaskDueTime = renderedTasksArray[index].children[2].value;
+                var currentRenderedTaskAlertFrequency = renderedTasksArray[index].children[3].value;
+                var currentDbTask = currentDbTask.val().Task;
+                var pathToCurrentDbTask = firebase.database().ref(`usernames/${user.displayName}/tasks/${currentDbTask}`);
+                pathToCurrentDbTask.remove();
+                var pathToUpdatedDbTask = firebase.database().ref(`usernames/${user.displayName}/tasks/${currentRenderedTaskName}`);
+                pathToUpdatedDbTask.set({
+                        Task: currentRenderedTaskName,
+                        DueDate: currentRenderedTaskDueDate,
+                        Time: currentRenderedTaskDueTime,
+                        AlertFrequency: currentRenderedTaskAlertFrequency
+                    });
+                index++;
+        });
+        });
+    });
+    window.location.href = "dashboard.html";
+};
