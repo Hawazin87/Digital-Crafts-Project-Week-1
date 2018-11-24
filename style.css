@@ -79,7 +79,9 @@ text-shadow:
     background-color:white;
 }
 
-#sign-up-form button, #log-in-form button{
+#sign-up-form button, #log-in-form button, 
+#verify-code-button,#create-account-button,
+#send-code-button{
 margin-bottom:15px;
 border:1px solid black;
 text-shadow:
