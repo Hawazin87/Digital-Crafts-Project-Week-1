@@ -97,6 +97,15 @@ footer{
     font-size:12px;
 }
 
+.spacer10{
+    height:10px;
+    width:100%;
+}
+.spacer25{
+    height:25px;
+    width:100%;
+}
+
 .spacer50{
     height:50px;
     width:100%;
@@ -137,12 +146,145 @@ footer{
     margin:0 auto;
     width:400px;
     max-height: 400px;
+    background-color:#C0C0C0;
+
 }
 
 .task-scheduler-box label{
     margin:10px;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
+.task-scheduler-box input{
+    border:1px solid black;
+}
+
+.task-scheduler-box select:hover{
+   cursor: pointer;
+}
+
+.task-scheduler-box input:hover,
+.task-scheduler-box input:focus,
+.task-scheduler-box input:active{
+    border:1px solid black;
+    cursor: pointer;
+    background-color:#808080;
+    color:white;
 }
 
 #schedule-task-button{
     margin:20px;
+}
+.list-heading, .archive-list-heading{
+    margin:0 auto;
+    background-color:#D3D3D3;
+    border:1px solid black;
+    border-radius:4px;
+}
+.list-heading p, .archive-list-heading p{
+    width:20%;
+    margin:0 auto;
+    padding:10px;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
+.archive-list-heading{
+    margin-top:-100px;
+}
+
+.rendered-list{
+    margin:0 auto;
+    background-color:#D3D3D3;
+    border:1px solid black;
+    border-radius:4px;
+    margin-bottom:15px;
+
+}
+
+.rendered-archive {
+
+    margin:0 auto;
+    border-radius:4px;
+    margin-bottom:15px;
+
+}
+
+.rendered-list input, .rendered-list select{
+    width:20%;
+    text-align:center;
+    padding:10px;
+    overflow:auto;
+    margin-bottom:0px;
+    color:black;
+    outline:none;
+    border:none;
+    border-radius:4px;
+
+}
+
+.rendered-archive p {
+    width:33%;
+    text-align:center;
+    padding:10px;
+    overflow:auto;
+    margin-bottom:0px;
+    color:white;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+    outline:none;
+}
+
+
+.rendered-list input:hover, 
+.rendered-list input:focus, 
+.rendered-lis input:active,
+.rendered-list select:hover,
+.rendered-list select:focus,
+.rendered-list select:active {
+    background-color:#C0C0C0;
+    cursor: pointer;
+}
+
+#save-changes-button,
+#my-tasks-button,
+#view-task-archive-button,
+#archive-completed-button {
+    width:100%;
+    max-width:220px;
+    margin:0 auto;
+}
+
+#task-archive-header,
+#save-changes-button,
+#my-tasks-button,
+#archive-completed-button,
+#archive-wrapper {
+
+    display:none;
+
+}
+
+input::-webkit-inner-spin-button, 
+input::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
 }
