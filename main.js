@@ -12,9 +12,9 @@ var verifyCodeButton = document.getElementById("verify-code-button");
 var verifiedBlock = document.getElementById("verified-block");
 var sentCode="";
 var savedPhoneNumber = localStorage.getItem("localStoragePN");
-const accountSid = 'ACdb9883811fd1aba6da1f6c1df63472a0';
-const authToken = 'e8c5380d34c500076532a03c9046435f';
-const client = require('twilio')(accountSid, authToken);
+// const accountSid = 'ACdb9883811fd1aba6da1f6c1df63472a0';
+// const authToken = 'e8c5380d34c500076532a03c9046435f';
+// const client =  new require('twilio')(accountSid, authToken);
 
 
 function showSignUpForm(){
@@ -258,16 +258,16 @@ function sendVerificationCode(){
     var generatedCode =  Math.floor(100000 + Math.random() * 900000);
     sentCode=generatedCode;
     console.log(generatedCode);
-    console.log(sentCode);
+     console.log(sentCode);
     
-     client.messages
-      .create({
-         body: generatedCode,
-         from: '12254429570',
-         to: phoneNumberInput
-       })
-      .then(message => console.log(message.sid))
-      .done();
+    //  client.messages
+    //   .create({
+    //      body: generatedCode,
+    //      from: '12254429570',
+    //      to: phoneNumberInput
+    //    })
+    //   .then(message => console.log(message.sid))
+    //   .done();
 }
 
 function verifyCode(){
