@@ -1,4 +1,4 @@
-var twilio = require('./app.js');
+
 var signUpForm = document.getElementById("sign-up-form");
 var logInForm = document.getElementById("log-in-form");
 var loginButton = document.getElementById("log-in-button");
@@ -10,6 +10,8 @@ var verificationFields = document.getElementById("verification-fields");
 var sendCodeButton = document.getElementById("send-code-button");
 var verifyCodeButton = document.getElementById("verify-code-button");
 var verifiedBlock = document.getElementById("verified-block");
+var sentCode="";
+var savedPhoneNumber = localStorage.getItem("localStoragePN");
 
 
 function showSignUpForm(){
@@ -35,86 +37,17 @@ function createNewAccount(){
         email = document.getElementById("sign-up-email").value;
         password = document.getElementById("sign-up-password").value; 
         var phoneNumber = document.getElementById("sign-up-number").value;
-        console.log(phoneNumber);
-        firebase.auth().languageCode = 'en';
-
-        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-up-button', {
-            'size': 'visible',
-            'callback': function(response) {
-              onSignInSubmit();
-            }
-          });
-      
-        
-        var appVerifier = window.recaptchaVerifier;
-        var code = document.getElementById();
-        firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
-            .then(function (confirmationResult) {
-
-            captchaForm.style.setProperty("display","block");
+        firebase.auth().createUserWithEmailAndPassword(email, password,).then(function(){
+            writeUserData();
             
-            window.confirmationResult = confirmationResult;
-            window.signingIn = false;
-            
-            confirmationResult.confirm(code).then(function (result) {
-                console.log("hello")
-            // User signed in successfully.
-            var user = result.user;
-            // if you run without verifyEmail, you can see phone number "2257183339" saved in phoneNumber in the network under VerifyPhoneNumber
-            
-            //verifyEmail()
-            // ...
-            }).catch(function (error) {
-            // User couldn't sign in (bad verification code?)
-            // ...
-            });
-            }).catch(function (error) {
-            // Error; SMS not sent
-            // ...
-            console.error('Error during signInWithPhoneNumber', error);
-            window.alert('Error during signInWithPhoneNumber:\n\n'
-                + error.code + '\n\n' + error.message);
-            window.signingIn = false;
-            grecaptcha.reset(window.recaptchaWidgetId);
-            
+            }).catch(function(error) {
+            alert(error.message);
             });
 
-           
-    
-}
-function verifyEmail(){
-    firebase.auth().createUserWithEmailAndPassword(email, password,).then(function(){
-        writeUserData();
-        
-        }).catch(function(error) {
-        alert(error.message);
-        });
-}
-function verifyCode() {
-    //e.preventDefault();
-    var verificationCode=document.getElementById("verification-code");
-    console.log(verificationCode);
-    if (verificationCode == "123456") {
-      window.verifyingCode = true;
-      console.log(verificationCode);
       
-      
-      confirmationResult.confirm(verificationCode).then(function (result) {
-        // User signed in successfully.
-        var user = result.user;
-        window.verifyingCode = false;
-        window.confirmationResult = null;
         
-      }).catch(function (error) {
-        // User couldn't sign in (bad verification code?)
-        console.error('Error while checking the verification code', error);
-        window.alert('Error while checking the verification code:\n\n'
-            + error.code + '\n\n' + error.message);
-        window.verifyingCode = false;
-        
-      });
-    }
-  }
+}
+       
 
 function loginToExistingAccount(){
 
@@ -162,10 +95,19 @@ function savePic(un,pp){
     storageRef.child(`images/${un}/${pp.name}`).put(pp); 
 
 }
+function first() {
+    localStorage.setItem('myItem', "something you want to store");
+}
 
+function second() {
+    myValue = null;
+    if (localStorage.getItem('myItem')) {
+        myValue = localStorage.getItem('myItem');
+    }
+}
 function savePhoneNumber(phone){
     var user = firebase.auth().currentUser;
-    var phoneRef = firebase.database().ref('phoneNumber');
+    var phoneRef = firebase.database().ref(`usernames/${user.displayName}/phoneNumber`);
     var newPhoneRef = phoneRef.push();
     newPhoneRef.set({
      
@@ -204,7 +146,9 @@ firebase.auth().onAuthStateChanged(function(user){
             var greeting = document.getElementById("greeting");
             greeting.innerHTML = `Welcome back<br> ${userName}!`;
 
-    }
+    };
+    
+    savePhoneNumber(savedPhoneNumber);
 });
 }
 
@@ -270,7 +214,8 @@ function showSendCodeButton(){
 
 function showVerifyCodeFields(){
     var phoneNumberInput = document.getElementById("sign-up-number").value;
-
+    first(phoneNumberInput);
+    second();
     function isDomestic(pn){
         if(pn.length == 10){
             return true;
@@ -305,22 +250,53 @@ function showVerifyCodeButton(){
 
 
 
+function sendVerificationCode(number){
+
+    var generatedCode =  Math.floor(100000 + Math.random() * 900000);
+    sentCode=generatedCode;
+    console.log(generatedCode);
+    console.log(sentCode);
+    
+    // client.messages
+    //   .create({
+    //      body: code,
+    //      from: '12254429570',
+    //      to: number
+    //    })
+    //   .then(message => console.log(message.sid))
+    //   .done();
+}
+
 function verifyCode(){
-    //code that verifies
+    console.log(sentCode);
+  
     var verificationCode = document.getElementById("verification-code-input").value;
+    console.log(verificationCode);
     if(verificationCode.length != 6){
         alert("verification code must be 6 digits in length");
         return;
-    }else{
+    }else if(sentCode!=verificationCode){
+        alert("Code does not match!");
+        return;
+    }
+    else if(sentCode==verificationCode){
+        console.log("sucess");
     verifiedBlock.style.setProperty("display","block");
     createAccountButton.style.setProperty("display","block");
     verificationFields.style.setProperty("display","none");
     }
+    
 }
-//funtion 1
-//pass phoneNumber to function that 
-//generates random int of length 6
 
-//verifyCode modification
-//compares code input with code sent for equality
-//
+function first(number) {
+    localStorage.setItem('localStoragePN', `1${number}`);
+}
+
+
+function second() {
+    myValue = null;
+    if (localStorage.getItem('localStoragePN')) {
+        myValue = localStorage.getItem('localStoragePN');
+    }
+}
+
