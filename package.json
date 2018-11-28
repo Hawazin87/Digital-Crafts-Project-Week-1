@@ -1,24 +1,17 @@
 {
-  "name": "digital-crafts-project-week-1",
+  "name": "public",
   "version": "1.0.0",
-  "description": "Group members include",
-  "main": "app.js",
+  "description": "",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify app.js -o bundle.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fuskovic/Digital-Crafts-Project-Week-1.git"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/fuskovic/Digital-Crafts-Project-Week-1/issues"
-  },
-  "homepage": "https://github.com/fuskovic/Digital-Crafts-Project-Week-1#readme",
   "dependencies": {
-    "browserify": "^16.2.3",
+    "axios": "^0.18.0",
+    "express": "^4.16.4",
     "twilio": "^3.24.0"
   }
 }
