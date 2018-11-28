@@ -1,4 +1,3 @@
-
 var signUpForm = document.getElementById("sign-up-form");
 var logInForm = document.getElementById("log-in-form");
 var loginButton = document.getElementById("log-in-button");
@@ -24,10 +23,7 @@ var verificationFields = document.getElementById("verification-fields");
 var sendCodeButton = document.getElementById("send-code-button");
 var verifyCodeButton = document.getElementById("verify-code-button");
 var verifiedBlock = document.getElementById("verified-block");
-var axios = require('axios');
-// var sentCode = "";
-
-
+var sentCode = "";
 var convertFromMilitaryToStd = function (fourDigitTime){
     var hours24 = parseInt(fourDigitTime.substring(0,2));
     var hours = ((hours24 + 11) % 12) + 1;
@@ -58,15 +54,11 @@ function showLoginForm(){
 function createNewAccount(){
         var email = document.getElementById("sign-up-email").value;
         var password = document.getElementById("sign-up-password").value;     
-        var phoneNumber = document.getElementById("sign-up-number").value;
         firebase.auth().createUserWithEmailAndPassword(email, password,).then(function(){
             writeUserData();
-            
             }).catch(function(error) {
             alert(error.message);
             });
-
-     
 }
        
 
@@ -104,7 +96,9 @@ function logOutUser(){
         photoURL: pp.name,
 
         }).then(function() {
-        window.location.href = "dashboard.html";
+        var userName = document.getElementById("sign-up-username").value;
+        var number = document.getElementById("sign-up-number").value;
+        saveNumber(userName,number);
         }).catch(function(error) {
             alert(error);
         });
@@ -116,26 +110,23 @@ function savePic(un,pp){
     storageRef.child(`images/${un}/${pp.name}`).put(pp); 
 
 }
-// function savePhoneNumber(phone){
-//     var user = firebase.auth().currentUser;
-//     var phoneRef = firebase.database().ref(`usernames/${user.displayName}/phoneNumber`);
-//     var newPhoneRef = phoneRef.push();
-//     newPhoneRef.set({
-     
-//       phone:phone,
-      
-//     });
-//   }
+
+function saveNumber(un,pn){
+
+    var dbPath = firebase.database().ref(`usernames/${un}`);
+        dbPath.set({
+        number: pn
+        }).then(()=>{
+            window.location.href = "dashboard.html";
+        });
+}
 
  function writeUserData(){
 
     var userName = document.getElementById("sign-up-username").value;
     var profilePic = document.getElementById("sign-up-pic").files[0];
-    
     savePic(userName,profilePic);
     setUserName(userName,profilePic);
-
-
 }
 
 function renderAccount(){
@@ -144,6 +135,7 @@ firebase.auth().onAuthStateChanged(function(user){
     if(user == null){
         window.location.href = "index.html";
     }else{
+            listenForAddedTasks(user);
             var userName = user.displayName;
             var profilePic = user.photoURL;
             const storageService = firebase.storage();
@@ -157,8 +149,6 @@ firebase.auth().onAuthStateChanged(function(user){
             greeting.innerHTML = `Welcome back<br> ${userName}!`;
 
     };
-    
-    // savePhoneNumber(savedPhoneNumber);
 });
 }
 
@@ -185,15 +175,8 @@ function addTask(){
     }
 }
 
-
-
-
-firebase.auth().onAuthStateChanged(function(user){
-    listenForAddedTasks(user);
-});
-
 function listenForAddedTasks(user){
-
+    
     var tasksBox = document.getElementById("tasks");
     var tasks = "";
     var path = `usernames/${user.displayName}/tasks/`;
@@ -207,7 +190,6 @@ function listenForAddedTasks(user){
     dbTasks.on('value',function(snapshot){
 
     snapshot.forEach(function(task){
-        console.log(task.val())
         var toDoItem = task.val().Task;
         var dueDate = task.val().DueDate;
         var time = task.val().Time;
@@ -232,7 +214,6 @@ function listenForAddedTasks(user){
 });
 };
 
-
 function showSendCodeButton(){
     var phoneNumberInput = document.getElementById("sign-up-number").value;
     if(phoneNumberInput.length >= 10){
@@ -250,7 +231,6 @@ function sendVerificationCode(pn){
       .create({
          body: code,
          from: '12254429570',
-        //  mediaUrl: 'https://spectatorau.imgix.net/content/uploads/2017/08/Snip20170801_15.png?auto=compress,enhance,format&crop=faces,entropy,edges&fit=crop&w=820&h=550',
          to: pn
        })
       .then(message => console.log(message.sid))
@@ -258,7 +238,10 @@ function sendVerificationCode(pn){
 }
 
 function showVerifyCodeFields(){
+    sendCodeButton.style.setProperty("display","none");
+    verificationFields.style.setProperty("display","block");
     var phoneNumberInput = document.getElementById("sign-up-number").value;
+    var endpoint = "";
 
     function isDomestic(pn){
         if(pn.length == 10){
@@ -267,23 +250,31 @@ function showVerifyCodeFields(){
             return false;
         }
     };
-console.log(isDomestic(phoneNumberInput));
 
         if(isDomestic(phoneNumberInput) == true){
-console.log("invoked");
             var internationalizedNumber = "1"+phoneNumberInput;
-            var endpoint = `/sendCode/${internationalizedNumber}`;
-            // sendVerificationCode(internationalizedNumber);
+            endpoint = `/sendCode/${internationalizedNumber}`;
+            
+                return axios.get(endpoint).then(function(res){
+                sendCodeButton.style.setProperty("display","none");
+                verificationFields.style.setProperty("display","block");
+                sentCode = res.data;
+                 return res.data;
+
+            });
+
+
+        }else{
+            endpoint = `/sendCode/${phoneNumberInput}`;
             axios.get(endpoint);
             sendCodeButton.style.setProperty("display","none");
             verificationFields.style.setProperty("display","block");
-        }else{
-console.log("invoked");
-            sendVerificationCode(phoneNumberInput);
-            sendCodeButton.style.setProperty("display","none");
-            verificationFields.style.setProperty("display","block");
+            return;
         }
 }
+
+
+
 
 function showVerifyCodeButton(){
     var verificationCode = document.getElementById("verification-code-input").value;
@@ -294,48 +285,18 @@ function showVerifyCodeButton(){
     }
 }
 
+function verifyCode(codeInput){
+        if(codeInput == sentCode){
+            verifyCodeButton.style.setProperty("display","none");
+            verifiedBlock.style.setProperty("display","block");
+            createAccountButton.style.setProperty("display","block");
+            return;
+        }else{
+            alert("Incorrect verification code");
+            return;
+        }
 
-
-function sendVerificationCode(){
-    var phoneNumberInput = document.getElementById("sign-up-number").value;
-    var generatedCode =  Math.floor(100000 + Math.random() * 900000);
-    sentCode = generatedCode;
-    // console.log(generatedCode);
-    console.log(sentCode);
 }
-
-// function verifyCode(){
-//     console.log(sentCode);
-  
-//     var verificationCode = document.getElementById("verification-code-input").value;
-//     console.log(verificationCode);
-//     if(verificationCode.length != 6){
-//         alert("verification code must be 6 digits in length");
-//         return;
-//     }else if(sentCode!=verificationCode){
-//         alert("Code does not match!");
-//         return;
-//     }
-//     else if(sentCode==verificationCode){
-//         console.log("sucess");
-//     verifiedBlock.style.setProperty("display","block");
-//     createAccountButton.style.setProperty("display","block");
-//     verificationFields.style.setProperty("display","none");
-//     }
-    
-// }
-
-// function first(number) {
-//     localStorage.setItem('localStoragePN', `1${number}`);
-// }
-
-
-// function second() {
-//     myValue = null;
-//     if (localStorage.getItem('localStoragePN')) {
-//         myValue = localStorage.getItem('localStoragePN');
-//     }
-// }
 
 
 function showSaveButton(){

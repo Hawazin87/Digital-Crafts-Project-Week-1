@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
 
         <body>
@@ -45,7 +46,7 @@
                                     <div id="verification-fields" style="display:none;">
                                     <label for="code-verifier">Enter Verification Code</label>
                                     <input oninput="showVerifyCodeButton()" type="number" class="form-control" id="verification-code-input" placeholder="123456">
-                                    <div id="verify-code-button" class="mt-4 btn btn-secondary btn-block" onclick="verifyCode()" style="display:none;">Verify Code</div>
+                                    <div id="verify-code-button" class="mt-4 btn btn-secondary btn-block" onclick="verifyCode(document.getElementById('verification-code-input').value)" style="display:none;">Verify Code</div>
                                     </div>   
                                     
                                     <div id="verified-block" class="mt-4" style="display:none;"><img src="img/verified.png" height="35px" width="35px" style="margin:0 auto"/></div>

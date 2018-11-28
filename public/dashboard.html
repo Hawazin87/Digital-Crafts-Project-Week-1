@@ -6,6 +6,7 @@
         <title>
         Dashboard
         </title>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
     <body id="dashboard-page" onload="renderAccount()" class="dashboard-body bg-dark">
     <p class="logOut" onclick="logOutUser()">Logout</p>
@@ -53,10 +54,7 @@
                             <p>Done?</p>
                           </div>
                             <div id = "tasks">
-                            <!--Where tasks will populate-->
-
-                            listenForAddedTasks();
-                            
+                            <!--Where tasks will populate-->                            
                             </div>
                     </div>
                     
