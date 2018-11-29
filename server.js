@@ -8,6 +8,10 @@ function serverListening(){
     console.log("listening...");
 }
 
+function sendAlert(req,res){
+
+}
+
 function sendVerificationCode(req,res){
 
     var phoneNumber = req.params.pn.toString();
@@ -25,6 +29,7 @@ function sendVerificationCode(req,res){
       .done();
     }
 
-app.get('/sendCode/:pn',sendVerificationCode)
+app.get('/sendCode/:pn',sendVerificationCode);
+app.get('/sendAlert/:task',sendAlert);
 app.listen(3000, serverListening());
 app.use(express.static('public'));

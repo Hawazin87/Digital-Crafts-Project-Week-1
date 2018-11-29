@@ -24,6 +24,9 @@ var sendCodeButton = document.getElementById("send-code-button");
 var verifyCodeButton = document.getElementById("verify-code-button");
 var verifiedBlock = document.getElementById("verified-block");
 var sentCode = "";
+var currentTime = "";
+var currentDate = "";
+
 var convertFromMilitaryToStd = function (fourDigitTime){
     var hours24 = parseInt(fourDigitTime.substring(0,2));
     var hours = ((hours24 + 11) % 12) + 1;
@@ -430,4 +433,83 @@ function updateTasks(){
     });
     window.location.href = "dashboard.html";
 };
+
+
+function checkTime(i) {
+
+            if (i < 10) {
+                i = "0" + i;
+            }
+            return i;
+        }
+    
+function getCurrentTimeAndDate(){
+
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth()+1;
+            var yyyy = today.getFullYear();
+            var h = today.getHours();
+            var m = today.getMinutes();
+
+            if(dd<10) {
+                dd = '0'+dd
+            } 
+
+            if(mm<10) {
+                mm = '0'+mm
+            } 
+
+            currentDate = `${yyyy}-${mm}-${dd}`;
+            m = checkTime(m);
+            currentTime = `${h}:${m}` ;
+            
+            setTimeout(function() {
+
+                getCurrentTimeAndDate();
+
+                firebase.auth().onAuthStateChanged(function(user){
+
+                var path = `usernames/${user.displayName}/tasks/`;
+                var dbTasks = firebase.database().ref(path);
+
+            dbTasks.on('value',function(snapshot){
+
+                snapshot.forEach(function(task){
+
+                    var dueDate = task.val().DueDate;
+                    var dueTime = task.val().Time;
+                    var alertFrequency = '';
+                    
+                    // console.log('%s %s',dueDate, dueTime)
+                    // console.log('%s %s',currentDate,currentTime);
+                    // console.log('alert frequency: %s', alertFrequency);
+
+                    if(alertFrequency == '1 Day prior' || alertFrequency == '1 hour prior'){
+                        alertFrequency = 1;
+                    // }else if(alertFrequency == '1 hour prior'){
+                    //     alertFrequency = 1;
+                    }else if(alertFrequency == '30 min prior'){
+                        alertFrequency = '';
+                    }
+
+                    console.log('%s %s',dueDate, dueTime)
+                    console.log('%s %s',currentDate,currentTime);
+                    console.log('alert frequency: %d', alertFrequency);
+
+                    
+
+                });
+            });
+        });
+    }, 1000);
+}
+
+getCurrentTimeAndDate()
+
+
+
+
+
+
 
