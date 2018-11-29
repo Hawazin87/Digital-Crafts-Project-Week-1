@@ -163,6 +163,8 @@ function addTask(){
     var alertFrequency = document.getElementById("alert-frequency").value;
     var time = document.getElementById("time").value;
 
+    
+
     if(task == "" || dueDate == "" || alertFrequency == "" || time == ""){
         alert("all fields are required to add task");
     }else{
