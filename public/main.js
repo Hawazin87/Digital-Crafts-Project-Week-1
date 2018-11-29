@@ -466,7 +466,7 @@ function getCurrentTimeAndDate(){
             
             setTimeout(function() {
 
-                getCurrentTimeAndDate();
+            getCurrentTimeAndDate();
 
                 firebase.auth().onAuthStateChanged(function(user){
 
@@ -479,25 +479,11 @@ function getCurrentTimeAndDate(){
 
                     var dueDate = task.val().DueDate;
                     var dueTime = task.val().Time;
-                    var alertFrequency = '';
-                    
-                    // console.log('%s %s',dueDate, dueTime)
-                    // console.log('%s %s',currentDate,currentTime);
-                    // console.log('alert frequency: %s', alertFrequency);
-
-                    if(alertFrequency == '1 Day prior' || alertFrequency == '1 hour prior'){
-                        alertFrequency = 1;
-                    // }else if(alertFrequency == '1 hour prior'){
-                    //     alertFrequency = 1;
-                    }else if(alertFrequency == '30 min prior'){
-                        alertFrequency = '';
-                    }
+                    var alertFrequency = task.val().AlertFrequency
 
                     console.log('%s %s',dueDate, dueTime)
                     console.log('%s %s',currentDate,currentTime);
-                    console.log('alert frequency: %d', alertFrequency);
-
-                    
+                    console.log('alert frequency: %s', alertFrequency);
 
                 });
             });
