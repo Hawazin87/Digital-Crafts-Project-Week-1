@@ -160,10 +160,27 @@ function addTask(){
 
     var task = document.getElementById("task").value;
     var dueDate = document.getElementById("due-date").value;
-    var alertFrequency = document.getElementById("alert-frequency").value;
-    var time = document.getElementById("time").value;
+    var alertFrequency = "";
 
-    
+    if(document.getElementById("alert-frequency").value == "1 day before"){   
+            console.log("1 day prior was detected");
+    }else if(document.getElementById("alert-frequency").value == "1 hour prior"){
+            console.log("1 hour prior")
+    }else if(document.getElementById("alert-frequency").value == "30 min prior"){
+            console.log("");
+    }
+        case "1 hour prior":
+            console.log("1 hour prior was detected");
+            // alertFrequency = "";
+            break;
+        case "30 min before":
+            console.log("30 min prior was detected");
+            // alertFrequency = "";
+            break;
+        default:
+            console.log("nothing detected");
+    }
+    return;
 
     if(task == "" || dueDate == "" || alertFrequency == "" || time == ""){
         alert("all fields are required to add task");
