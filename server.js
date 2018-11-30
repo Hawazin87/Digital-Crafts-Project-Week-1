@@ -25,6 +25,29 @@ function sendVerificationCode(req,res){
       .done();
     }
 
-app.get('/sendCode/:pn',sendVerificationCode)
+
+
+
+function sendMeme (req,res) {
+    var phoneNumber = req.params.pn.toString();
+    var meme = app.get("https://api.imgflip.com/get_memes");
+    console.log(meme);
+    res.status(200).send(meme);
+   
+
+    client.messages
+      .create({
+         MediaUrl: meme,
+         body: "hello",
+         from: '12254429570',
+         to: phoneNumber
+       })
+      .then(message => console.log(message.sid))
+      .done();
+    
+}
+
+app.get('/fetchMeme/:pn',sendMeme);
+app.get('/sendCode/:pn',sendVerificationCode);
 app.listen(3000, serverListening());
 app.use(express.static('public'));
