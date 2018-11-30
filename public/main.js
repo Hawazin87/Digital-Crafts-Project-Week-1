@@ -160,27 +160,54 @@ function addTask(){
 
     var task = document.getElementById("task").value;
     var dueDate = document.getElementById("due-date").value;
-    var alertFrequency = "";
+    var alertFrequency = document.getElementById("alert-frequency").value;
+    var time = document.getElementById("time").value;
+    console.log(dueDate);
+    console.log(typeof time);
+    var day = dueDate.slice(8);
+    var minute = time.slice(3);
+    var minuteAsInt = parseInt(minute);
+    var hour = time.substring(0,3);
+    var hourAsInt = parseInt(hour);
+    
+    console.log(minute);
+    console.log(day);
+    console.log(typeof day);
+    var dayAsInt = parseInt(day);
+    console.log(dayAsInt);
 
-    if(document.getElementById("alert-frequency").value == "1 day before"){   
-            console.log("1 day prior was detected");
-    }else if(document.getElementById("alert-frequency").value == "1 hour prior"){
-            console.log("1 hour prior")
+
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth();
+            var yyyy = today.getFullYear();
+            // var h = today.getHours();
+            // var m = today.getMinutes();
+
+            if(dd<10) {
+                dd = '0'+dd
+            } 
+
+            if(mm<10) {
+                mm = '0'+mm
+            } 
+
+            var yesterday = `${yyyy}-${mm}-${dd}`;
+            // var time = `${h}:${m}` ;
+            console.log(yesterday);
+            // m = checkTime(m);
+            
+
+
+    if(document.getElementById("alert-frequency").value == "1 day prior"){
+          
+    }else if(document.getElementById("alert-frequency").value == "1 Hour prior"){
+            console.log("1 hour prior was detected")
     }else if(document.getElementById("alert-frequency").value == "30 min prior"){
-            console.log("");
-    }
-        case "1 hour prior":
-            console.log("1 hour prior was detected");
-            // alertFrequency = "";
-            break;
-        case "30 min before":
             console.log("30 min prior was detected");
-            // alertFrequency = "";
-            break;
-        default:
-            console.log("nothing detected");
+    }else{
+        console.log("nada");
     }
-    return;
 
     if(task == "" || dueDate == "" || alertFrequency == "" || time == ""){
         alert("all fields are required to add task");
@@ -190,7 +217,11 @@ function addTask(){
             Task:task,
             DueDate:dueDate,
             Time:time,
-            AlertFrequency:alertFrequency
+            AlertFrequency:alertFrequency,
+            Day:day,
+            DayAsInt: dayAsInt,
+            MinuteAsInt: minuteAsInt,
+            HourAsInt: hourAsInt
             
         });
         window.location.href = "dashboard.html";
@@ -454,63 +485,63 @@ function updateTasks(){
 };
 
 
-function checkTime(i) {
+// function checkTime(i) {
 
-            if (i < 10) {
-                i = "0" + i;
-            }
-            return i;
-        }
+//             if (i < 10) {
+//                 i = "0" + i;
+//             }
+//             return i;
+//         }
     
-function getCurrentTimeAndDate(){
+// function getCurrentTimeAndDate(){
 
-            var today = new Date();
-            var dd = today.getDate();
-            var mm = today.getMonth()+1;
-            var yyyy = today.getFullYear();
-            var h = today.getHours();
-            var m = today.getMinutes();
+//             var today = new Date();
+//             var dd = today.getDate();
+//             var mm = today.getMonth()+1;
+//             var yyyy = today.getFullYear();
+//             var h = today.getHours();
+//             var m = today.getMinutes();
 
-            if(dd<10) {
-                dd = '0'+dd
-            } 
+//             if(dd<10) {
+//                 dd = '0'+dd
+//             } 
 
-            if(mm<10) {
-                mm = '0'+mm
-            } 
+//             if(mm<10) {
+//                 mm = '0'+mm
+//             } 
 
-            currentDate = `${yyyy}-${mm}-${dd}`;
-            m = checkTime(m);
-            currentTime = `${h}:${m}` ;
+//             currentDate = `${yyyy}-${mm}-${dd}`;
+//             m = checkTime(m);
+//             currentTime = `${h}:${m}` ;
             
-            setTimeout(function() {
+//             setTimeout(function() {
 
-            getCurrentTimeAndDate();
+//             getCurrentTimeAndDate();
 
-                firebase.auth().onAuthStateChanged(function(user){
+//                 firebase.auth().onAuthStateChanged(function(user){
 
-                var path = `usernames/${user.displayName}/tasks/`;
-                var dbTasks = firebase.database().ref(path);
+//                 var path = `usernames/${user.displayName}/tasks/`;
+//                 var dbTasks = firebase.database().ref(path);
 
-            dbTasks.on('value',function(snapshot){
+//             dbTasks.on('value',function(snapshot){
 
-                snapshot.forEach(function(task){
+//                 snapshot.forEach(function(task){
 
-                    var dueDate = task.val().DueDate;
-                    var dueTime = task.val().Time;
-                    var alertFrequency = task.val().AlertFrequency
+//                     var dueDate = task.val().DueDate;
+//                     var dueTime = task.val().Time;
+//                     var alertFrequency = task.val().AlertFrequency
 
-                    console.log('%s %s',dueDate, dueTime)
-                    console.log('%s %s',currentDate,currentTime);
-                    console.log('alert frequency: %s', alertFrequency);
+//                     console.log('%s %s',dueDate, dueTime)
+//                     console.log('%s %s',currentDate,currentTime);
+//                     console.log('alert frequency: %s', alertFrequency);
 
-                });
-            });
-        });
-    }, 1000);
-}
+//                 });
+//             });
+//         });
+//     }, 1000);
+// }
 
-getCurrentTimeAndDate()
+// getCurrentTimeAndDate()
 
 
 
