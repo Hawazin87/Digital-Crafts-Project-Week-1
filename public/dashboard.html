@@ -7,6 +7,7 @@
         Dashboard
         </title>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="data.js"></script>
     </head>
     <body id="dashboard-page" onload="renderAccount()" class="dashboard-body bg-dark">
     <p class="logOut" onclick="logOutUser()">Logout</p>
@@ -27,6 +28,7 @@
                                 <option>1 day prior</option>
                                 <option>1 Hour prior</option>
                                 <option>30 min prior</option>
+                                <option>1 min prior</option>
                                 </select>
                                 <span>
                                     <button onclick="addTask()" id="schedule-task-button" class="btn btn-secondary shadow-lg">Schedule Task</button>

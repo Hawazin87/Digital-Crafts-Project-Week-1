@@ -23,9 +23,12 @@ var verificationFields = document.getElementById("verification-fields");
 var sendCodeButton = document.getElementById("send-code-button");
 var verifyCodeButton = document.getElementById("verify-code-button");
 var verifiedBlock = document.getElementById("verified-block");
+var monthsWith31Days = ["01","03","05","07","08","10","12"];
+var monthsWith30Days = ["04","06","09","11"];  
 var sentCode = "";
 var currentTime = "";
 var currentDate = "";
+var currentDateAndTime = "";
 
 var convertFromMilitaryToStd = function (fourDigitTime){
     var hours24 = parseInt(fourDigitTime.substring(0,2));
@@ -160,68 +163,157 @@ function addTask(){
 
     var task = document.getElementById("task").value;
     var dueDate = document.getElementById("due-date").value;
-    var alertFrequency = document.getElementById("alert-frequency").value;
     var time = document.getElementById("time").value;
-    console.log(dueDate);
-    console.log(typeof time);
-    var day = dueDate.slice(8);
-    var minute = time.slice(3);
-    var minuteAsInt = parseInt(minute);
-    var hour = time.substring(0,3);
-    var hourAsInt = parseInt(hour);
-    
-    console.log(minute);
-    console.log(day);
-    console.log(typeof day);
-    var dayAsInt = parseInt(day);
-    console.log(dayAsInt);
+    var alertFrequency = document.getElementById("alert-frequency").value;
+    var year = parseInt(dueDate.substring(0,4));
+    var month = parseInt(dueDate.substring(5,7))
+    var day = parseInt(dueDate.slice(8));
+    var minutes = parseInt(time.slice(3));
+    var hour = parseInt(time.substring(0,3));  
 
 
-            var today = new Date();
-            var dd = today.getDate();
-            var mm = today.getMonth();
-            var yyyy = today.getFullYear();
-            // var h = today.getHours();
-            // var m = today.getMinutes();
+function formatAlert(){
 
-            if(dd<10) {
-                dd = '0'+dd
-            } 
+    if(alertFrequency == "1 day prior"){
 
-            if(mm<10) {
-                mm = '0'+mm
-            } 
+        day -= 1;
 
-            var yesterday = `${yyyy}-${mm}-${dd}`;
-            // var time = `${h}:${m}` ;
-            console.log(yesterday);
-            // m = checkTime(m);
+        if(day < 10 && day != 0){
+            day =`0${day.toString()}`;
+        }
+        
+        function handle0edgecase(){
+
+            if(month < 10){
+            month = `0${month.toString()}`;
+            }
+            if(month >= 10){
+            month = month.toString();
+            }
+
+            month = parseInt(month) - 1;
+
+            if(month < 10){
+                month = `0${month.toString()}`;
+            }
+            if(month <= 10){
+                month = month.toString();
+            }
+            if(month == 0){
+                month = "12";
+                year -= 1;
+            }
             
 
 
-    if(document.getElementById("alert-frequency").value == "1 day prior"){
-          
-    }else if(document.getElementById("alert-frequency").value == "1 Hour prior"){
-            console.log("1 hour prior was detected")
-    }else if(document.getElementById("alert-frequency").value == "30 min prior"){
-            console.log("30 min prior was detected");
-    }else{
-        console.log("nada");
+            var isMoWith30days = monthsWith30Days.find(function(mo){
+                return month == mo;
+            });
+    
+            var isMoWith31Days = monthsWith31Days.find(function(mo){
+                return month == mo;
+            });
+
+
+            if((isMoWith30days == undefined) && (isMoWith31Days == undefined)){
+                day = "28";
+                return;
+            }
+            if(isMoWith31Days !== undefined){
+                day = "31";
+                return;
+            }
+            if(isMoWith30days !== undefined){
+                day = "30";
+                return;
+            }
+
+        }
+
+        if(day == 0){
+            handle0edgecase();
+        }
+
+        if(day >= 10){
+            day = day.toString();
+        }
+
+        
+        return `${year.toString()}-${month}-${day} @${convertFromMilitaryToStd(time)}`;
+
+    }else if(alertFrequency  == "1 Hour prior"){
+
+        hour -= 1;
+        
+        if(hour == 0){
+            hour = hour.toString();
+            hour = "12";
+        }
+        if((hour > 0) && (hour < 10)){
+            hour = `0${hour.toString()}`;
+        }
+        if(hour > 10){
+            hour = hour.toString();
+        }
+       
+        return `${dueDate} @${convertFromMilitaryToStd(`${hour}:${minutes}`)}`;
+
+    }else if(alertFrequency == "30 min prior"){
+
+        minutes -= 30;
+        if(minutes < 0){
+            minutes += 60;
+            hour -= 1;
+            minutes = minutes.toString();
+        }else if(minutes == 0 ){
+            minutes = `0${minutes.toString()}`;
+        }else if((minutes > 0) && (minutes <10)){
+            minutes = `0${minutes.toString()}`;
+        }
+        return `${dueDate} at ${convertFromMilitaryToStd(`${hour.toString()}:${minutes}`)}`;
+    }else if(alertFrequency == "1 min prior"){
+
+        minutes -= 1;
+
+        if(minutes < 0){
+            minutes += 60;
+            hour -= 1;
+            minutes = minutes.toString();
+        }else if(minutes == 0){
+            minutes = `0${minutes.toString()}`;
+        }else if((minutes > 0) && (minutes < 10)){
+            minutes = `0${minutes.toString()}`;
+        }else if((minutes > 0) && (minutes > 10)){
+            minutes = `${minutes.toString()}`;
+        }
+
+        if(hour == 0){
+            hour = hour.toString();
+            hour = "12";   
+        }
+        if((hour > 0) && (hour < 10)){
+            hour = `0${hour.toString()}`;
+        }
+        if(hour > 10){
+            hour = hour.toString();
+        }
+
+        return `${dueDate} @${convertFromMilitaryToStd(`${hour}:${minutes}`)}`;
     }
+}
+
+
 
     if(task == "" || dueDate == "" || alertFrequency == "" || time == ""){
         alert("all fields are required to add task");
     }else{
+        var dateAndTimeToAlert = formatAlert();
         var user = firebase.auth().currentUser;
         firebase.database().ref(`usernames/${user.displayName}/tasks/${task}`).set({
             Task:task,
             DueDate:dueDate,
             Time:time,
-            AlertFrequency:alertFrequency,
-            Day:day,
-            DayAsInt: dayAsInt,
-            MinuteAsInt: minuteAsInt,
-            HourAsInt: hourAsInt
+            AlertFrequency:dateAndTimeToAlert,
             
         });
         window.location.href = "dashboard.html";
@@ -257,6 +349,7 @@ function listenForAddedTasks(user){
                     <option>1 Day prior</option>
                     <option>1 Hour prior</option>
                     <option>30 min prior</option>
+                    <option>1 min prior</option>
                     </select>
                     <input onclick = "showArchiveCompletedButton()" type="checkbox" class="mt-4 check-box" style="margin:0 auto;">
                     </div>`;
@@ -312,7 +405,7 @@ function showVerifyCodeFields(){
                 sendCodeButton.style.setProperty("display","none");
                 verificationFields.style.setProperty("display","block");
                 sentCode = res.data;
-                 return res.data;
+                return res.data;
 
             });
 
@@ -485,63 +578,99 @@ function updateTasks(){
 };
 
 
-// function checkTime(i) {
+function checkTime(i) {
 
-//             if (i < 10) {
-//                 i = "0" + i;
-//             }
-//             return i;
-//         }
+            if (i < 10) {
+                i = "0" + i;
+            }
+            return i;
+        }
     
-// function getCurrentTimeAndDate(){
+function getCurrentTimeAndDate(){
 
-//             var today = new Date();
-//             var dd = today.getDate();
-//             var mm = today.getMonth()+1;
-//             var yyyy = today.getFullYear();
-//             var h = today.getHours();
-//             var m = today.getMinutes();
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth()+1;
+            var yyyy = today.getFullYear();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var userPhoneNumber = "";
 
-//             if(dd<10) {
-//                 dd = '0'+dd
-//             } 
+            if(dd<10) {
+                dd = `0${dd.toString()}`
+            } 
 
-//             if(mm<10) {
-//                 mm = '0'+mm
-//             } 
+            if(mm<10) {
+                mm = `0${mm.toString()}`
+            }
+            if(h<10){
+                h = `0${h.toString()}`
+            }
 
-//             currentDate = `${yyyy}-${mm}-${dd}`;
-//             m = checkTime(m);
-//             currentTime = `${h}:${m}` ;
+            currentDate = `${yyyy}-${mm}-${dd}`;
+            m = checkTime(m);
+            currentTime = `${h}:${m}`;
+            currentDateAndTime = `${currentDate} @${convertFromMilitaryToStd(currentTime)}`;
             
-//             setTimeout(function() {
+            
+            setTimeout(function() {
 
-//             getCurrentTimeAndDate();
+            getCurrentTimeAndDate();
 
-//                 firebase.auth().onAuthStateChanged(function(user){
+                firebase.auth().onAuthStateChanged(function(user){
 
-//                 var path = `usernames/${user.displayName}/tasks/`;
-//                 var dbTasks = firebase.database().ref(path);
+                    var pathToNum = `usernames/${user.displayName}/number`;
+                    var dbRef = firebase.database().ref(pathToNum);
+                    
+                    dbRef.once('value',function(snapshot){
+                        userPhoneNumber = snapshot.val();
+                    }).then(function(){
+                    var path = `usernames/${user.displayName}/tasks/`;
 
-//             dbTasks.on('value',function(snapshot){
+                    var dbTasks = firebase.database().ref(path);
 
-//                 snapshot.forEach(function(task){
+            dbTasks.on('value',function(snapshot){
 
-//                     var dueDate = task.val().DueDate;
-//                     var dueTime = task.val().Time;
-//                     var alertFrequency = task.val().AlertFrequency
+                        snapshot.forEach(function(task){
 
-//                     console.log('%s %s',dueDate, dueTime)
-//                     console.log('%s %s',currentDate,currentTime);
-//                     console.log('alert frequency: %s', alertFrequency);
+                            var alertFrequency = task.val().AlertFrequency
 
-//                 });
-//             });
-//         });
-//     }, 1000);
-// }
+                            if(alertFrequency == currentDateAndTime){
+        
+                            var task = snapshot.val().Task;
 
-// getCurrentTimeAndDate()
+                            snapshot.forEach(function(currentTask){
+                                    
+                                    memeData.map(function(meme){
+                                        var theTask = currentTask.val().Task;
+                                        var memeTitle = meme.title;
+                                        var memeImg = meme.image;
+                                        console.log(memeTitle);
+                                        console.log(memeTitle.toLowerCase());
+                                        console.log(theTask);
+                                        console.log(theTask.toLowerCase());
+                                        console.log(userPhoneNumber);
+                                        console.log(memeTitle.toLowerCase().includes(theTask.toLowerCase()));
+
+                                        if(memeTitle.toLowerCase().includes(theTask.toLowerCase())){
+                                            var endpoint = `/sendAlert/${userPhoneNumber}/${encodeURIComponent(memeImg)}`;
+                                            axios.get(endpoint).then(function(res){
+                                                console.log(res)
+                                            }).catch(function(err){
+                                                console.log(err);
+                                            });
+                                        };
+                                    }); 
+                                });
+                            };
+                        });
+                    });
+                });
+            });
+            }, 50000);
+        };
+
+getCurrentTimeAndDate();
 
 
 
