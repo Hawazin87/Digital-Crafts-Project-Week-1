@@ -42,6 +42,7 @@ var convertFromMilitaryToStd = function (fourDigitTime){
 };
 
 
+
 function showSignUpForm(){
 
     signUpButton.style.setProperty("display","none");
@@ -172,25 +173,32 @@ function addTask(){
     var day = parseInt(dueDate.slice(8));
     var minutes = parseInt(time.slice(3));
     var hour = parseInt(time.substring(0,3));  
-
     var now = new Date();
     var d = now.getDate();
     var y = now.getFullYear();
-    var m = now.getMonth();
-    console.log(dueDate);
-    console.log(d);
-    console.log(y);
-    console.log(m);
+    var m = now.getMonth()+1;
 
-if(dueDate < new Date()){
-    alert("date can not be in the past");
-    return;
-}
+    if(m < 10){
+        m = `0${m}`;
+    }
+    if(d < 10){
+        d = `0${d}`;
+    }
 
-return;
+    yr = dueDate.split('-')[0];
+    mth = dueDate.split('-')[1];
+    dy = dueDate.split('-')[2];
+    var dateSelected = parseInt(`${yr}${mth}${dy}`);
+    var todaysDate = parseInt(`${y}${m}${d}`);
+
+    if(dateSelected < todaysDate){
+        alert("date cannot be in the past");
+        return;
+    }
+
 function formatAlert(){
 
-    if(alertFrequency == "1 day prior"){
+    if(alertFrequency == "1 Day prior"){
 
         day -= 1;
 
@@ -358,7 +366,7 @@ function listenForAddedTasks(user){
 
         tasks += `<div class="row rendered-list">
                     <input onchange = "showSaveButton()" id = "to-do-item" type="text" value = "${toDoItem}" >
-                    <input onchange = "showSaveButton()" id = "to-do-date" type="date" value = "${dueDate}" >
+                    <input onchange = "showSaveButton()" id = "to-do-date" type="date" value = "${dueDate}" min="2018-12-01">
                     <input onchange = "showSaveButton()" id = "to-do-time" type="time" value = "${time}">
                     <select onchange = "showSaveButton()" required="true" name="alert-frequency-set" id="alert-frequency-set">
                     <option>${alertFrequency}</option>
@@ -555,16 +563,15 @@ function updateTasks(){
         var renderedTasks = document.getElementsByClassName("rendered-list");
         var renderedTasksArray = Array.from(renderedTasks);
         var index = 0;
+        var currentRenderedTaskName = renderedTasksArray[index].children[0].value;
+        var currentRenderedTaskDueDate = renderedTasksArray[index].children[1].value;
+        var currentRenderedTaskDueTime = renderedTasksArray[index].children[2].value;
+        var currentRenderedTaskAlertFrequency = renderedTasksArray[index].children[3].value;
         var tasksDb = firebase.database().ref(`usernames/${user.displayName}/tasks/`);
 
             tasksDb.once('value',function(snapshot){
 
             snapshot.forEach(function(currentDbTask){
-                
-                var currentRenderedTaskName = renderedTasksArray[index].children[0].value;
-                var currentRenderedTaskDueDate = renderedTasksArray[index].children[1].value;
-                var currentRenderedTaskDueTime = renderedTasksArray[index].children[2].value;
-                var currentRenderedTaskAlertFrequency = renderedTasksArray[index].children[3].value;
             
             function formatAlert(){
 
@@ -574,7 +581,7 @@ function updateTasks(){
                 var minutes = parseInt(currentRenderedTaskDueTime.slice(3));
                 var hour = parseInt(currentRenderedTaskDueTime.substring(0,3));  
             
-                if(currentRenderedTaskAlertFrequency == "1 day prior"){
+                if(currentRenderedTaskAlertFrequency == "1 Day prior"){
             
                     day -= 1;
             
@@ -639,7 +646,7 @@ function updateTasks(){
                     }
             
                     
-                    return `${year.toString()}-${month}-${day} @${currentRenderedTaskDueTime}`;
+                    return `${year.toString()}-${month}-${day} @${convertFromMilitaryToStd(currentRenderedTaskDueTime)}`;
             
                 }else if(currentRenderedTaskAlertFrequency  == "1 Hour prior"){
             
@@ -793,14 +800,8 @@ function getCurrentTimeAndDate(){
                                         var theTask = currentTask.val().Task;
                                         var memeTitle = meme.title;
                                         var memeImg = meme.image;
-                                        console.log(memeTitle);
-                                        console.log(memeTitle.toLowerCase());
-                                        console.log(theTask);
-                                        console.log(theTask.toLowerCase());
-                                        console.log(userPhoneNumber);
-                                        console.log(memeTitle.toLowerCase().includes(theTask.toLowerCase()));
 
-                                        if(memeTitle.toLowerCase().includes(theTask.toLowerCase())){
+                                        if(theTask.toLowerCase().includes(memeTitle.toLowerCase())){
                                             var endpoint = `/sendAlert/${userPhoneNumber}/${encodeURIComponent(memeImg)}`;
                                             axios.get(endpoint).then(function(res){
                                                 console.log(res)
