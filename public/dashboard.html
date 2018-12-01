@@ -7,6 +7,7 @@
         Dashboard
         </title>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="data.js"></script>
     </head>
     <body id="dashboard-page" onload="renderAccount()" class="dashboard-body bg-dark">
     <p class="logOut" onclick="logOutUser()">Logout</p>
@@ -17,16 +18,17 @@
                             <img class="dashboard-pic shadow-lg mt-5" src="" height="400px" width="400px">
                             <div class="task-scheduler-box shadow-lg mt-5">
                                 <label for="task">Task</label>
-                                <input required="true" id="task" name="task" class="form-control" value="some task">
+                                <input  required="true" id="task" name="task" class="form-control" value="" placeholder="some task">
                                 <label for="due-date">Due-date</label>
-                                <input id="due-date" name="due-date" required="true" type="date" class="form-control"/>
+                                <input id="due-date" name="due-date" required="true" type="date" class="form-control" min="2018-12-01"/>
                                 <label for="time">Time Due</label>
                                 <input type="time" id="time" name="time" value="21:35" class="form-control">
                                 <label for="alert-frequency">Alert</label>
                                 <select required="true" name="alert-frequency" id="alert-frequency">
-                                <option>1 day prior</option>
+                                <option>1 Day prior</option>
                                 <option>1 Hour prior</option>
                                 <option>30 min prior</option>
+                                <option>1 min prior</option>
                                 </select>
                                 <span>
                                     <button onclick="addTask()" id="schedule-task-button" class="btn btn-secondary shadow-lg">Schedule Task</button>

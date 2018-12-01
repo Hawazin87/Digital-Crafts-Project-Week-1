@@ -8,6 +8,21 @@ function serverListening(){
     console.log("listening...");
 }
 
+function sendAlert(req,res){
+
+    var phoneNumber = req.params.pn.toString();
+    var img = req.params.img.toString();
+    res.status(200).send("alert succesfully sent!");
+
+
+    client.messages.create({
+         body: "From your friends at Meme-spiration!",
+         mediaUrl: img,
+         from: '12254429570',
+         to: phoneNumber
+       }).then(message => console.log("Alert succesfully sent!")).done();
+    }
+
 function sendVerificationCode(req,res){
 
     var phoneNumber = req.params.pn.toString();
@@ -15,16 +30,14 @@ function sendVerificationCode(req,res){
     res.status(200).send(code.toString());
    
 
-    client.messages
-      .create({
+    client.messages.create({
          body: code,
          from: '12254429570',
          to: phoneNumber
-       })
-      .then(message => console.log(message.sid))
-      .done();
+       }).then(message => console.log(message.sid)).done();
     }
 
-app.get('/sendCode/:pn',sendVerificationCode)
+app.get('/sendCode/:pn',sendVerificationCode);
+app.get('/sendAlert/:pn/:img',sendAlert);
 app.listen(3000, serverListening());
 app.use(express.static('public'));

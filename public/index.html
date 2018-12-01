@@ -7,6 +7,7 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="data.js"></script>
     </head>
 
         <body>
@@ -22,7 +23,7 @@
 
             <div class="main-wrapper h-100 shadow-lg container-fluid  d-flex flex-column align-items-center text-center">
             
-                <div id="auth-box" class="auth-box shadow-lg p-3 mt-5" style="display:none;">
+                <div id="auth-box" class="auth-box shadow-lg p-3 mt-3" style="display:none;">
 
                         <div id="sign-up-form" class="col text-center" style="display:none;">
 
@@ -44,7 +45,7 @@
                                     <div class="mt-4 btn btn-secondary" id="send-code-button" onclick="showVerifyCodeFields()" style="display:none;">Send Code</div>
 
                                     <div id="verification-fields" style="display:none;">
-                                    <label for="code-verifier">Enter Verification Code</label>
+                                    <label for="code-verifier" id="code-verifier">Enter Verification Code</label>
                                     <input oninput="showVerifyCodeButton()" type="number" class="form-control" id="verification-code-input" placeholder="123456">
                                     <div id="verify-code-button" class="mt-4 btn btn-secondary btn-block" onclick="verifyCode(document.getElementById('verification-code-input').value)" style="display:none;">Verify Code</div>
                                     </div>   
