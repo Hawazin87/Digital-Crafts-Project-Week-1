@@ -23,6 +23,8 @@ var verificationFields = document.getElementById("verification-fields");
 var sendCodeButton = document.getElementById("send-code-button");
 var verifyCodeButton = document.getElementById("verify-code-button");
 var verifiedBlock = document.getElementById("verified-block");
+var codeVerifier = document.getElementById('code-verifier');
+var verCodeInput = document.getElementById('verification-code-input');
 var monthsWith31Days = ["01","03","05","07","08","10","12"];
 var monthsWith30Days = ["04","06","09","11"];  
 var sentCode = "";
@@ -171,7 +173,21 @@ function addTask(){
     var minutes = parseInt(time.slice(3));
     var hour = parseInt(time.substring(0,3));  
 
+    var now = new Date();
+    var d = now.getDate();
+    var y = now.getFullYear();
+    var m = now.getMonth();
+    console.log(dueDate);
+    console.log(d);
+    console.log(y);
+    console.log(m);
 
+if(dueDate < new Date()){
+    alert("date can not be in the past");
+    return;
+}
+
+return;
 function formatAlert(){
 
     if(alertFrequency == "1 day prior"){
@@ -351,7 +367,7 @@ function listenForAddedTasks(user){
                     <option>30 min prior</option>
                     <option>1 min prior</option>
                     </select>
-                    <input onclick = "showArchiveCompletedButton()" type="checkbox" class="mt-4 check-box" style="margin:0 auto;">
+                    <input onclick = "showArchiveCompletedButton()" type="checkbox" class="mt-4 check-box" style="margin:0 auto;justify-content:center;align-items:center;width:5px;">
                     </div>`;
                    
 
@@ -367,20 +383,6 @@ function showSendCodeButton(){
     }else{
         return;
     }
-}
-
-function sendVerificationCode(pn){
-
-    var code =  Math.floor(100000 + Math.random() * 900000);
-    
-    client.messages
-      .create({
-         body: code,
-         from: '12254429570',
-         to: pn
-       })
-      .then(message => console.log(message.sid))
-      .done();
 }
 
 function showVerifyCodeFields(){
@@ -405,21 +407,21 @@ function showVerifyCodeFields(){
                 sendCodeButton.style.setProperty("display","none");
                 verificationFields.style.setProperty("display","block");
                 sentCode = res.data;
-                return res.data;
+                return sentCode;
 
             });
 
 
         }else{
             endpoint = `/sendCode/${phoneNumberInput}`;
-            axios.get(endpoint);
+            return axios.get(endpoint).then(function(res){
             sendCodeButton.style.setProperty("display","none");
             verificationFields.style.setProperty("display","block");
-            return;
+            sentCode = res.data;
+            return sentCode;
+            });
         }
 }
-
-
 
 
 function showVerifyCodeButton(){
@@ -433,9 +435,12 @@ function showVerifyCodeButton(){
 
 function verifyCode(codeInput){
         if(codeInput == sentCode){
+            codeVerifier.style.setProperty("display","none");
+            verCodeInput.style.setProperty("display","none");
             verifyCodeButton.style.setProperty("display","none");
             verifiedBlock.style.setProperty("display","block");
             createAccountButton.style.setProperty("display","block");
+            
             return;
         }else{
             alert("Incorrect verification code");
@@ -555,11 +560,154 @@ function updateTasks(){
             tasksDb.once('value',function(snapshot){
 
             snapshot.forEach(function(currentDbTask){
-
+                
                 var currentRenderedTaskName = renderedTasksArray[index].children[0].value;
                 var currentRenderedTaskDueDate = renderedTasksArray[index].children[1].value;
                 var currentRenderedTaskDueTime = renderedTasksArray[index].children[2].value;
                 var currentRenderedTaskAlertFrequency = renderedTasksArray[index].children[3].value;
+            
+            function formatAlert(){
+
+                var year = parseInt(currentRenderedTaskDueDate.substring(0,4));
+                var month = parseInt(currentRenderedTaskDueDate.substring(5,7))
+                var day = parseInt(currentRenderedTaskDueDate.slice(8));
+                var minutes = parseInt(currentRenderedTaskDueTime.slice(3));
+                var hour = parseInt(currentRenderedTaskDueTime.substring(0,3));  
+            
+                if(currentRenderedTaskAlertFrequency == "1 day prior"){
+            
+                    day -= 1;
+            
+                    if(day < 10 && day != 0){
+                        day =`0${day.toString()}`;
+                    }
+                    
+                    function handle0edgecase(){
+            
+                        if(month < 10){
+                        month = `0${month.toString()}`;
+                        }
+                        if(month >= 10){
+                        month = month.toString();
+                        }
+            
+                        month = parseInt(month) - 1;
+            
+                        if(month < 10){
+                            month = `0${month.toString()}`;
+                        }
+                        if(month <= 10){
+                            month = month.toString();
+                        }
+                        if(month == 0){
+                            month = "12";
+                            year -= 1;
+                        }
+                        
+            
+            
+                        var isMoWith30days = monthsWith30Days.find(function(mo){
+                            return month == mo;
+                        });
+                
+                        var isMoWith31Days = monthsWith31Days.find(function(mo){
+                            return month == mo;
+                        });
+            
+            
+                        if((isMoWith30days == undefined) && (isMoWith31Days == undefined)){
+                            day = "28";
+                            return;
+                        }
+                        if(isMoWith31Days !== undefined){
+                            day = "31";
+                            return;
+                        }
+                        if(isMoWith30days !== undefined){
+                            day = "30";
+                            return;
+                        }
+            
+                    }
+            
+                    if(day == 0){
+                        handle0edgecase();
+                    }
+            
+                    if(day >= 10){
+                        day = day.toString();
+                    }
+            
+                    
+                    return `${year.toString()}-${month}-${day} @${currentRenderedTaskDueTime}`;
+            
+                }else if(currentRenderedTaskAlertFrequency  == "1 Hour prior"){
+            
+                    hour -= 1;
+                    
+                    if(hour == 0){
+                        hour = hour.toString();
+                        hour = "12";
+                    }
+                    if((hour > 0) && (hour < 10)){
+                        hour = `0${hour.toString()}`;
+                    }
+                    if(hour > 10){
+                        hour = hour.toString();
+                    }
+                   
+                    return `${currentRenderedTaskDueDate} @${convertFromMilitaryToStd(`${hour}:${minutes}`)}`;
+            
+                }else if(currentRenderedTaskAlertFrequency == "30 min prior"){
+            
+                    minutes -= 30;
+                    if(minutes < 0){
+                        minutes += 60;
+                        hour -= 1;
+                        minutes = minutes.toString();
+                    }else if(minutes == 0 ){
+                        minutes = `0${minutes.toString()}`;
+                    }else if((minutes > 0) && (minutes <10)){
+                        minutes = `0${minutes.toString()}`;
+                    }
+                    return `${currentRenderedTaskDueDate} at ${convertFromMilitaryToStd(`${hour.toString()}:${minutes}`)}`;
+                }else if(currentRenderedTaskAlertFrequency == "1 min prior"){
+            
+                    minutes -= 1;
+            
+                    if(minutes < 0){
+                        minutes += 60;
+                        hour -= 1;
+                        minutes = minutes.toString();
+                    }else if(minutes == 0){
+                        minutes = `0${minutes.toString()}`;
+                    }else if((minutes > 0) && (minutes < 10)){
+                        minutes = `0${minutes.toString()}`;
+                    }else if((minutes > 0) && (minutes > 10)){
+                        minutes = `${minutes.toString()}`;
+                    }
+            
+                    if(hour == 0){
+                        hour = hour.toString();
+                        hour = "12";   
+                    }
+                    if((hour > 0) && (hour < 10)){
+                        hour = `0${hour.toString()}`;
+                    }
+                    if(hour > 10){
+                        hour = hour.toString();
+                    }
+            
+                    return `${currentRenderedTaskDueDate} @${convertFromMilitaryToStd(`${hour}:${minutes}`)}`;
+                }
+                if(currentRenderedTaskAlertFrequency != "1 day prior" && currentRenderedTaskAlertFrequency != "1 min prior" &&
+                currentRenderedTaskAlertFrequency  != "1 Hour prior" && currentRenderedTaskAlertFrequency != "30 min prior"){
+                    return `${currentRenderedTaskAlertFrequency}`
+            }
+        }
+                
+            
+                var dateAndTimeToAlert = formatAlert();
                 var currentDbTask = currentDbTask.val().Task;
                 var pathToCurrentDbTask = firebase.database().ref(`usernames/${user.displayName}/tasks/${currentDbTask}`);
                 pathToCurrentDbTask.remove();
@@ -568,7 +716,7 @@ function updateTasks(){
                         Task: currentRenderedTaskName,
                         DueDate: currentRenderedTaskDueDate,
                         Time: currentRenderedTaskDueTime,
-                        AlertFrequency: currentRenderedTaskAlertFrequency
+                        AlertFrequency: dateAndTimeToAlert
                     });
                 index++;
         });
